@@ -17,12 +17,13 @@ tag = "v1"
 new_sqlite_classes = ["DashboardRoom"]
 
 # D1 for event persistence
-# Replace database_id with your actual D1 database ID from:
+# For local development, use any valid UUID (wrangler creates a local SQLite file).
+# For production, replace with your actual D1 database ID from:
 # npx wrangler d1 create setupmanagerhud-events
 [[d1_databases]]
 binding = "DB"
 database_name = "setupmanagerhud-events"
-database_id = "REPLACE_WITH_YOUR_D1_DATABASE_ID"
+database_id = "00000000-0000-0000-0000-000000000000"
 
 # Webhook token authentication (required for /webhook)
 # Set this with: npx wrangler secret put WEBHOOK_TOKEN
