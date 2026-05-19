@@ -4,13 +4,13 @@ milestone: v1.1
 milestone_name: NPM Package Upgrade Path
 status: executing
 last_updated: "2026-05-19T22:06:30Z"
-last_activity: 2026-05-19 -- Completed 06-01-PLAN.md (defensive GitHub Actions workflow)
+last_activity: 2026-05-19 -- Completed 06-02-PLAN.md (README template badge and deployment docs)
 progress:
   total_phases: 3
-  completed_phases: 2
+  completed_phases: 3
   total_plans: 8
-  completed_plans: 7
-  percent: 88
+  completed_plans: 8
+  percent: 100
 ---
 
 # Project State
@@ -24,12 +24,12 @@ See: .planning/PROJECT.md (updated 2026-05-19)
 
 ## Current Position
 
-Phase: 06 (deployment-automation) — EXECUTING
+Phase: 06 (deployment-automation) — COMPLETE
 Plan: 2 of 2
-Status: Executing Phase 06
-Last activity: 2026-05-19 -- Completed 06-01-PLAN.md (defensive GitHub Actions workflow)
+Status: Phase 06 Complete - v1.1 milestone ready for verification
+Last activity: 2026-05-19 -- Completed 06-02-PLAN.md (README template badge and deployment docs)
 
-Progress: [########=-] 88% (v1.0 complete, v1.1 phase 6 plan 1 complete)
+Progress: [==========] 100% (v1.0 complete, v1.1 all phases complete)
 
 ## Accumulated Context
 
@@ -49,6 +49,8 @@ Recent decisions affecting current work:
 - 06-01: secrets check gate validates configuration early (D-02)
 - 06-01: D1 placeholder check prevents cryptic migration errors (D-03)
 - 06-01: WEBHOOK_TOKEN is optional secret with conditional sync (D-11)
+- 06-02: GitHub Actions deployment documented as primary path (D-04)
+- 06-02: "Use this template" badge added to README (D-05)
 
 ### Pending Todos
 
@@ -67,4 +69,4 @@ Items from v1.0 milestone close (2026-04-25):
 | verification | Phase 02 wiki pages need manual push to GitHub | human_needed | 2026-04-25 |
 
 ---
-*Last updated: 2026-05-19 after Phase 04-02 execution*
+*Last updated: 2026-05-19 after Phase 06-02 execution*

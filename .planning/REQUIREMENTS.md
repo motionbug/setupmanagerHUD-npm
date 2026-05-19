@@ -32,8 +32,8 @@ Requirements for NPM Package Upgrade Path. Each maps to roadmap phases.
 ### Deployment
 
 - [x] **DEP-01**: Package works with Cloudflare Pages deployment via GitHub Actions
-- [ ] **DEP-02**: Deploy documentation guides admins through setup
-- [ ] **DEP-03**: Deploy-to-Cloudflare button in starter template README
+- [x] **DEP-02**: Deploy documentation guides admins through setup
+- [x] **DEP-03**: Deploy-to-Cloudflare button in starter template README
 - [x] **DEP-04**: GitHub Actions workflow handles D1 migrations before deployment
 
 ## Future Requirements
@@ -75,8 +75,8 @@ Deferred to v1.2+. Tracked but not in current roadmap.
 | TPL-03 | Phase 5 | Complete |
 | TPL-04 | Phase 5 | Complete |
 | DEP-01 | Phase 6 | Complete |
-| DEP-02 | Phase 6 | Pending |
-| DEP-03 | Phase 6 | Pending |
+| DEP-02 | Phase 6 | Complete |
+| DEP-03 | Phase 6 | Complete |
 | DEP-04 | Phase 6 | Complete |
 
 **Coverage:**
@@ -87,4 +87,4 @@ Deferred to v1.2+. Tracked but not in current roadmap.
 
 ---
 *Requirements defined: 2026-04-19*
-*Last updated: 2026-05-19 after 06-01-PLAN.md execution*
+*Last updated: 2026-05-19 after 06-02-PLAN.md execution*

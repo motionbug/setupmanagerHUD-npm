@@ -22,7 +22,7 @@
 
 - [ ] **Phase 4: Package Extraction** - Bundle core app as NPM package with config interface
 - [x] **Phase 5: Starter Template** - Create minimal template repo with postinstall sync (completed 2026-05-19)
-- [ ] **Phase 6: Deployment Automation** - Pages deployment workflow and documentation
+- [x] **Phase 6: Deployment Automation** - Pages deployment workflow and documentation (completed 2026-05-19)
 
 ## Phase Details
 
@@ -68,7 +68,7 @@ Plans:
 **Plans**: 2 plans
 Plans:
 - [x] 06-01-PLAN.md — Defensive GitHub Actions workflow with D1 migrations
-- [ ] 06-02-PLAN.md — Starter README with template badge and setup documentation
+- [x] 06-02-PLAN.md — Starter README with template badge and setup documentation
 
 ## Progress
 
@@ -82,7 +82,7 @@ Phases execute in numeric order: 4 -> 5 -> 6
 | 3. README Integration | v1.0 | 1/1 | Complete | 2026-04-25 |
 | 4. Package Extraction | v1.1 | 2/3 | Executing | - |
 | 5. Starter Template | v1.1 | 3/3 | Complete | 2026-05-19 |
-| 6. Deployment Automation | v1.1 | 1/2 | Executing | - |
+| 6. Deployment Automation | v1.1 | 2/2 | Complete | 2026-05-19 |
 
 ---
-*Last updated: 2026-05-19 after 06-01-PLAN.md execution*
+*Last updated: 2026-05-19 after 06-02-PLAN.md execution*
