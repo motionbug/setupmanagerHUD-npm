@@ -11,8 +11,17 @@ import { Skeleton } from "@/components/ui/skeleton";
 import type { FilterState } from "@/types";
 import { isFinishedWebhook } from "@/types";
 
+type AppConfig = {
+  version: string;
+  latestVersion: string | null;
+  updateAvailable: boolean;
+  appTitle: string;
+  logoUrl: string | null;
+};
+
 export function App() {
   const { connected, events, stats, health } = useWebSocket();
+  const [config, setConfig] = React.useState<AppConfig | null>(null);
   const [filters, setFilters] = React.useState<FilterState>({
     eventType: "all",
     macOSVersion: "",
@@ -20,6 +29,15 @@ export function App() {
     timeRange: "all",
     search: "",
   });
+
+  React.useEffect(() => {
+    fetch("/api/config")
+      .then((res) => res.json())
+      .then((data) => setConfig(data as AppConfig))
+      .catch(() => {
+        // Silent failure - config stays null, defaults used
+      });
+  }, []);
 
   const filteredEvents = React.useMemo(() => {
     return events.filter((event) => {
@@ -83,18 +101,27 @@ export function App() {
   if (!connected && events.length === 0) {
     return (
       <div className="min-h-screen bg-canvas">
-        <Header connected={false} />
+        <Header
+          connected={false}
+          appTitle={config?.appTitle || "Setup Manager HUD"}
+          logoUrl={config?.logoUrl || null}
+        />
         <main className="mx-auto max-w-[1600px] px-6 py-8">
           {health.status === "degraded" && <HealthWarning health={health} />}
           <DashboardSkeleton />
         </main>
+        <VersionBadge config={config} />
       </div>
     );
   }
 
   return (
     <div className="min-h-screen bg-canvas">
-      <Header connected={connected} />
+      <Header
+        connected={connected}
+        appTitle={config?.appTitle || "Setup Manager HUD"}
+        logoUrl={config?.logoUrl || null}
+      />
       <main className="mx-auto max-w-[1600px] px-6 py-8">
         <div className="space-y-8">
           {health.status === "degraded" && <HealthWarning health={health} />}
@@ -143,6 +170,7 @@ export function App() {
         </div>
       </main>
       <PoweredByJamf />
+      <VersionBadge config={config} />
     </div>
   );
 }
@@ -168,13 +196,33 @@ function HealthWarning({
   );
 }
 
-function Header({ connected }: { connected: boolean }) {
+function Header({
+  connected,
+  appTitle,
+  logoUrl,
+}: {
+  connected: boolean;
+  appTitle: string;
+  logoUrl: string | null;
+}) {
   return (
     <header className="sticky top-0 z-50 w-full border-b border-edge bg-surface/95 backdrop-blur supports-[backdrop-filter]:bg-surface/80">
       <div className="mx-auto flex h-16 max-w-[1600px] items-center justify-between px-6">
-        <div className="flex items-center gap-5">
-          <h1 className="text-2xl font-semibold tracking-tight text-ink">Setup Manager HUD</h1>
-          <ConnectionStatus connected={connected} />
+        <div className="flex items-center gap-3">
+          {logoUrl && (
+            <img
+              src={logoUrl}
+              alt="Logo"
+              className="h-8 w-auto"
+              onError={(e) => {
+                e.currentTarget.style.display = "none";
+              }}
+            />
+          )}
+          <h1 className="text-2xl font-semibold tracking-tight text-ink">{appTitle}</h1>
+          <div className="ml-2">
+            <ConnectionStatus connected={connected} />
+          </div>
         </div>
         <ThemeToggle />
       </div>
@@ -210,6 +258,34 @@ function PoweredByJamf() {
           alt="Jamf"
           className="block h-4 w-auto dark:hidden"
         />
+      </span>
+    </div>
+  );
+}
+
+function VersionBadge({ config }: { config: AppConfig | null }) {
+  if (!config) return null;
+
+  return (
+    <div className="fixed bottom-4 left-4 z-50 rounded-xl border border-edge bg-surface/90 px-4 py-2 text-sm font-medium text-ink-muted backdrop-blur shadow-sm">
+      <span className="inline-flex items-center gap-2">
+        v{config.version}
+        {config.updateAvailable && config.latestVersion && (
+          <>
+            <span className="text-ink-ghost">|</span>
+            <span className="text-status-warning">
+              Update available:{" "}
+              <a
+                href="https://www.npmjs.com/package/@motionbug/setupmanagerhud-core"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="font-semibold hover:underline"
+              >
+                v{config.latestVersion}
+              </a>
+            </span>
+          </>
+        )}
       </span>
     </div>
   );
