@@ -65,7 +65,10 @@ Plans:
   2. GitHub Actions workflow runs D1 migrations before deployment
   3. Deploy documentation walks admin through complete setup
   4. "Deploy via GitHub Template" workflow guides user to create repo, input secrets (CLOUDFLARE_API_TOKEN, etc.), and auto-triggers migration + deployment
-**Plans**: TBD
+**Plans**: 2 plans
+Plans:
+- [ ] 06-01-PLAN.md — Defensive GitHub Actions workflow with D1 migrations
+- [ ] 06-02-PLAN.md — Starter README with template badge and setup documentation
 
 ## Progress
 
@@ -79,7 +82,7 @@ Phases execute in numeric order: 4 -> 5 -> 6
 | 3. README Integration | v1.0 | 1/1 | Complete | 2026-04-25 |
 | 4. Package Extraction | v1.1 | 2/3 | Executing | - |
 | 5. Starter Template | v1.1 | 3/3 | Complete | 2026-05-19 |
-| 6. Deployment Automation | v1.1 | 0/? | Not started | - |
+| 6. Deployment Automation | v1.1 | 0/2 | Planning | - |
 
 ---
-*Last updated: 2026-05-19 after Phase 05 planning*
+*Last updated: 2026-05-19 after Phase 06 planning*
