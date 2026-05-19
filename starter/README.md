@@ -2,16 +2,69 @@
 
 Real-time webhook dashboard for Jamf Setup Manager. Deployed to Cloudflare Workers.
 
-## Quick Start
+[![Use this template](https://img.shields.io/badge/Use%20this%20template-238636?style=for-the-badge&logo=github)](https://github.com/motionbug/setupmanagerhud-template/generate)
 
-1. Clone this repository
+## Deploy via GitHub Actions (Recommended)
+
+Deploy entirely from your browser -- no local tools required.
+
+1. **Create your repository**
+
+   Click the "Use this template" button above to create your own copy.
+
+2. **Create a D1 database in Cloudflare Dashboard**
+
+   - Go to [dash.cloudflare.com](https://dash.cloudflare.com) > Workers & Pages > D1
+   - Click "Create database"
+   - Name it `setupmanagerhud-events`
+   - Copy the **Database ID** (a UUID like `abc12345-6789-def0-1234-567890abcdef`)
+
+3. **Update wrangler.toml with your database ID**
+
+   In your new repository, edit `wrangler.toml` and replace the placeholder:
+
+   ```toml
+   database_id = "00000000-0000-0000-0000-000000000000"  # Replace with your real ID
+   ```
+
+   Commit the change.
+
+4. **Add GitHub repository secrets**
+
+   Go to Settings > Secrets and variables > Actions, then add:
+
+   | Secret | Where to find it |
+   |--------|------------------|
+   | `CLOUDFLARE_API_TOKEN` | [dash.cloudflare.com](https://dash.cloudflare.com) > My Profile > API Tokens > Create Token |
+   | `CLOUDFLARE_ACCOUNT_ID` | Any zone's Overview page in Cloudflare Dashboard (right sidebar) |
+   | `WEBHOOK_TOKEN` | Create your own secure token for webhook authentication |
+
+   For the API Token, use the "Edit Cloudflare Workers" template or create a custom token with Workers and D1 permissions.
+
+5. **Trigger first deploy**
+
+   - Go to the **Actions** tab in your repository
+   - Select "Deploy to Cloudflare Workers" workflow
+   - Click **Run workflow** > **Run workflow**
+
+Your dashboard is now live at `https://setupmanagerhud.<your-subdomain>.workers.dev`
+
+## Local Development (Optional)
+
+For developers who want to run locally before deploying.
+
+1. Clone your repository:
+   ```bash
+   git clone https://github.com/YOUR_USERNAME/your-repo-name.git
+   cd your-repo-name
+   ```
 
 2. Install dependencies:
    ```bash
    npm install
    ```
 
-3. Create a D1 database:
+3. Create a D1 database (if not already created):
    ```bash
    npx wrangler d1 create setupmanagerhud-events
    ```
@@ -33,8 +86,6 @@ Real-time webhook dashboard for Jamf Setup Manager. Deployed to Cloudflare Worke
    ```bash
    npm run deploy
    ```
-
-Your dashboard is now live at `https://setupmanagerhud.<your-subdomain>.workers.dev`
 
 ## Customization
 
