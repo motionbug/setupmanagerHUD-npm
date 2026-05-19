@@ -13,12 +13,12 @@ import {
 
 export { DashboardRoom };
 
-interface Env {
+export interface Env {
   DB: D1Database;
   DASHBOARD_ROOM: DurableObjectNamespace;
-  WEBHOOK_TOKEN?: string;
+  ASSETS: Fetcher;
+  WEBHOOK_TOKEN: string;
   WEBHOOK_SECRET?: string;
-  ASSETS?: Fetcher;
   CF_ACCESS_AUD?: string;
   CF_ACCESS_TEAM_DOMAIN?: string;
 }
@@ -473,7 +473,8 @@ function handleWebSocket(request: Request, env: Env): Response {
   return stub.fetch(request) as unknown as Response;
 }
 
-export default {
+// Named export for package consumers (D-05)
+export const app = {
   async fetch(request: Request, env: Env): Promise<Response> {
     const url = new URL(request.url);
 
@@ -514,6 +515,9 @@ export default {
   },
 };
 
+// Default export for backwards compatibility (direct wrangler deploy per D-05)
+export default app;
+
 /** @internal Exported for testing only */
 export { timingSafeEqual as _testTimingSafeEqual };
 
@@ -522,5 +526,3 @@ export { validateAccessJwt as _testValidateAccessJwt };
 
 /** @internal Exported for testing only - Env type for test mocks */
 export type { Env as _TestEnv };
-
-export type { Env };

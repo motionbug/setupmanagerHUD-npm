@@ -130,12 +130,16 @@ describe("validateAccessJwt", () => {
     CF_ACCESS_TEAM_DOMAIN: "test-team.cloudflareaccess.com",
     DB: {} as D1Database,
     DASHBOARD_ROOM: {} as DurableObjectNamespace,
+    ASSETS: {} as Fetcher,
+    WEBHOOK_TOKEN: "test-token",
   };
 
   // Mock environment without Access configured
   const mockEnvWithoutAccess: Env = {
     DB: {} as D1Database,
     DASHBOARD_ROOM: {} as DurableObjectNamespace,
+    ASSETS: {} as Fetcher,
+    WEBHOOK_TOKEN: "test-token",
   };
 
   describe("when Access is not configured", () => {
