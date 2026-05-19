@@ -50,8 +50,11 @@ Plans:
   2. Running `npm install` in template copies D1 migrations from node_modules to ./migrations
   3. `npm run update` and `npm run deploy` commands work as expected
   4. postinstall script works on Windows (via shx)
-**Plans**: TBD
-**UI hint**: yes
+**Plans**: 3 plans
+Plans:
+- [x] 05-01-PLAN.md — Core package /api/config endpoint and Dashboard UI (version badge, branding)
+- [x] 05-02-PLAN.md — Starter template files and upgrade script
+- [ ] 05-03-PLAN.md — Documentation and integration verification
 
 ### Phase 6: Deployment Automation
 **Goal**: Administrators can deploy via GitHub Actions with one-click setup
@@ -75,8 +78,8 @@ Phases execute in numeric order: 4 -> 5 -> 6
 | 2. Wiki Content | v1.0 | 2/2 | Complete | 2026-04-20 |
 | 3. README Integration | v1.0 | 1/1 | Complete | 2026-04-25 |
 | 4. Package Extraction | v1.1 | 2/3 | Executing | - |
-| 5. Starter Template | v1.1 | 0/? | Not started | - |
+| 5. Starter Template | v1.1 | 2/3 | Executing | - |
 | 6. Deployment Automation | v1.1 | 0/? | Not started | - |
 
 ---
-*Last updated: 2026-05-19 after Phase 04-02 execution*
+*Last updated: 2026-05-19 after Phase 05 planning*
