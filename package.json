@@ -1,0 +1,7 @@
+{
+  "name": "setupmanagerhud-monorepo",
+  "private": true,
+  "workspaces": [
+    "packages/*"
+  ]
+}
