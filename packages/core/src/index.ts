@@ -21,7 +21,12 @@ export interface Env {
   WEBHOOK_SECRET?: string;
   CF_ACCESS_AUD?: string;
   CF_ACCESS_TEAM_DOMAIN?: string;
+  APP_TITLE?: string;
+  LOGO_URL?: string;
 }
+
+/** Package version - updated at release time */
+const PACKAGE_VERSION = "1.1.0";
 
 const SECURITY_HEADERS: Record<string, string> = {
   "X-Content-Type-Options": "nosniff",
@@ -463,6 +468,38 @@ async function handleHealth(request: Request, env: Env): Promise<Response> {
   return json(health, health.status === "healthy" ? 200 : 503, request);
 }
 
+// GET /api/config
+async function handleConfig(request: Request, env: Env): Promise<Response> {
+  const config: {
+    version: string;
+    latestVersion: string | null;
+    updateAvailable: boolean;
+    appTitle: string;
+    logoUrl: string | null;
+  } = {
+    version: PACKAGE_VERSION,
+    latestVersion: null,
+    updateAvailable: false,
+    appTitle: env.APP_TITLE || "Setup Manager HUD",
+    logoUrl: env.LOGO_URL || null,
+  };
+
+  try {
+    const res = await fetch(
+      "https://registry.npmjs.org/@motionbug/setupmanagerhud-core/latest"
+    );
+    if (res.ok) {
+      const data = (await res.json()) as { version: string };
+      config.latestVersion = data.version;
+      config.updateAvailable = data.version !== PACKAGE_VERSION;
+    }
+  } catch {
+    // Silently ignore registry fetch failures — latestVersion stays null
+  }
+
+  return json(config, 200, request);
+}
+
 // GET /ws — WebSocket upgrade
 function handleWebSocket(request: Request, env: Env): Response {
   if (request.headers.get("Upgrade") !== "websocket") {
@@ -501,6 +538,9 @@ export const app = {
     }
     if (url.pathname === "/api/health" && request.method === "GET") {
       return handleHealth(request, env);
+    }
+    if (url.pathname === "/api/config" && request.method === "GET") {
+      return handleConfig(request, env);
     }
     if (url.pathname === "/ws") {
       return handleWebSocket(request, env);
