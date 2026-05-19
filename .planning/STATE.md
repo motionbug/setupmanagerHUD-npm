@@ -3,14 +3,14 @@ gsd_state_version: 1.0
 milestone: v1.1
 milestone_name: NPM Package Upgrade Path
 status: executing
-last_updated: "2026-05-19T20:51:40.315Z"
-last_activity: 2026-05-19 -- Phase 5 planning complete
+last_updated: "2026-05-19T22:06:30Z"
+last_activity: 2026-05-19 -- Completed 06-01-PLAN.md (defensive GitHub Actions workflow)
 progress:
   total_phases: 3
   completed_phases: 2
-  total_plans: 9
-  completed_plans: 6
-  percent: 67
+  total_plans: 8
+  completed_plans: 7
+  percent: 88
 ---
 
 # Project State
@@ -20,16 +20,16 @@ progress:
 See: .planning/PROJECT.md (updated 2026-05-19)
 
 **Core value:** Real-time visibility into macOS device enrollments
-**Current focus:** Phase 6 - Deployment Automation
+**Current focus:** Phase 06 — deployment-automation
 
 ## Current Position
 
-Phase: 6 of 6 (Deployment Automation)
-Plan: 0 of ? in current phase
-Status: Ready to plan
-Last activity: 2026-05-19 -- Phase 5 complete, verification passed
+Phase: 06 (deployment-automation) — EXECUTING
+Plan: 2 of 2
+Status: Executing Phase 06
+Last activity: 2026-05-19 -- Completed 06-01-PLAN.md (defensive GitHub Actions workflow)
 
-Progress: [########--] 83% (v1.0 complete, v1.1 phase 5 complete)
+Progress: [########=-] 88% (v1.0 complete, v1.1 phase 6 plan 1 complete)
 
 ## Accumulated Context
 
@@ -45,6 +45,10 @@ Recent decisions affecting current work:
 - 04-02: Env interface exported with required ASSETS and WEBHOOK_TOKEN fields per D-17
 - 04-02: Named app export + default export preserves backwards compatibility per D-05
 - 04-02: sync-migrations.js uses additive-only logic per D-12, D-13
+- 06-01: paths filter prevents crash-loop paradox (D-01)
+- 06-01: secrets check gate validates configuration early (D-02)
+- 06-01: D1 placeholder check prevents cryptic migration errors (D-03)
+- 06-01: WEBHOOK_TOKEN is optional secret with conditional sync (D-11)
 
 ### Pending Todos
 
