@@ -27,6 +27,7 @@ export interface FetchEventsOptions {
   search?: string;
   timeRange?: TimeRangeFilter;
   failedOnly?: boolean;
+  archived?: boolean;
 }
 
 export interface EventStats {
@@ -185,6 +186,11 @@ export async function fetchEvents(
     bindings.push(cutoff);
   }
 
+  // Archive filter: default to non-archived records unless explicitly including archived
+  if (!normalizedOptions.archived) {
+    clauses.push("is_archived = 0");
+  }
+
   const search = normalizedOptions.search?.trim();
   if (search) {
     const likeValue = `%${escapeLike(search.toLowerCase())}%`;
@@ -193,7 +199,7 @@ export async function fetchEvents(
         LOWER(model_name) LIKE ? ESCAPE '\\' OR
         LOWER(COALESCE(computer_name, '')) LIKE ? ESCAPE '\\' OR
         LOWER(macos_version) LIKE ? ESCAPE '\\' OR
-        LOWER(COALESCE(user_id, '')) LIKE ? ESCAPE '\\')`,
+        LOWER(COALESCE(user_id, '')) LIKE ? ESCAPE '\\')`
     );
     bindings.push(likeValue, likeValue, likeValue, likeValue, likeValue);
   }
@@ -275,5 +281,25 @@ export async function fetchEventStats(env: EventsEnv): Promise<EventStats> {
           : 0,
     devices: result?.devices ?? 0,
     lastEventTime: result?.last_event_time ?? null,
+  };
+}
+
+export async function toggleArchive(
+  env: EventsEnv,
+  eventId: string
+): Promise<{ eventId: string; isArchived: boolean } | null> {
+  const result = await env.DB.prepare(
+    "UPDATE events SET is_archived = 1 - is_archived WHERE event_id = ? RETURNING event_id, is_archived"
+  )
+    .bind(eventId)
+    .first<{ event_id: string; is_archived: number }>();
+
+  if (!result) {
+    return null;
+  }
+
+  return {
+    eventId: result.event_id,
+    isArchived: result.is_archived === 1,
   };
 }
