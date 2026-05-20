@@ -13,6 +13,7 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { DashboardIcon } from "./DashboardIcon";
 import { Download01Icon, Search01Icon, Cancel01Icon } from "@hugeicons/core-free-icons";
@@ -22,6 +23,8 @@ interface FiltersProps {
   filters: FilterState;
   onFiltersChange: (filters: FilterState) => void;
   events: StoredEvent[];
+  showArchived: boolean;
+  onShowArchivedChange: (showArchived: boolean) => void;
 }
 
 const DEFAULT_FILTERS: FilterState = {
@@ -32,7 +35,7 @@ const DEFAULT_FILTERS: FilterState = {
   search: "",
 };
 
-export function Filters({ filters, onFiltersChange, events }: FiltersProps) {
+export function Filters({ filters, onFiltersChange, events, showArchived, onShowArchivedChange }: FiltersProps) {
   const macOSVersions = React.useMemo(() => {
     const versions = new Set(events.map((e) => e.payload.macOSVersion));
     return Array.from(versions).sort().reverse();
@@ -176,6 +179,27 @@ export function Filters({ filters, onFiltersChange, events }: FiltersProps) {
           ))}
         </SelectContent>
       </Select>
+
+      {/* Active/Archived toggle */}
+      <Tabs
+        value={showArchived ? "archived" : "active"}
+        onValueChange={(v) => onShowArchivedChange(v === "archived")}
+      >
+        <TabsList className="h-10 bg-control border border-edge-subtle rounded-lg p-1">
+          <TabsTrigger
+            value="active"
+            className="h-8 px-4 text-sm font-medium rounded-md data-[state=active]:bg-surface data-[state=active]:shadow-sm data-[state=active]:text-ink text-ink-muted hover:text-ink"
+          >
+            Active
+          </TabsTrigger>
+          <TabsTrigger
+            value="archived"
+            className="h-8 px-4 text-sm font-medium rounded-md data-[state=active]:bg-surface data-[state=active]:shadow-sm data-[state=active]:text-ink text-ink-muted hover:text-ink"
+          >
+            Archived
+          </TabsTrigger>
+        </TabsList>
+      </Tabs>
 
       {/* Clear filters */}
       {hasActiveFilters && (
