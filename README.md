@@ -123,13 +123,16 @@ The webhook endpoint must stay reachable for devices, but requests are rejected 
 
 ## Local Development
 
+> **Note:** This is a monorepo. Local development commands should be run from `packages/core/`.
+
 ```bash
+cd packages/core
 npm install
-npm run dev
-npm run dev:worker
+npm run dev          # Frontend on :5173
+npm run dev:worker   # Full stack on :8787
 ```
 
-For local Worker development, create a `.dev.vars` file from `.dev.vars.example`.
+For local Worker development, create a `.dev.vars` file from `.dev.vars.example` in the `packages/core` directory.
 
 ## Architecture
 
