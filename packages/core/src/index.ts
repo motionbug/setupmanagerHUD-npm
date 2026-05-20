@@ -8,6 +8,7 @@ import {
   fetchEvents,
   fetchEventStats,
   insertEvent,
+  toggleArchive,
   type FetchEventsOptions,
 } from "./events";
 
@@ -84,7 +85,7 @@ function getCorsHeaders(request: Request): Record<string, string> {
   if (origin === workerOrigin) {
     return {
       "Access-Control-Allow-Origin": origin,
-      "Access-Control-Allow-Methods": "GET, POST, OPTIONS",
+      "Access-Control-Allow-Methods": "GET, POST, PATCH, OPTIONS",
       "Access-Control-Allow-Headers": "Content-Type",
       "Vary": "Origin",
     };
@@ -412,10 +413,22 @@ async function handleEvents(request: Request, env: Env): Promise<Response> {
         ? timeRangeParam
         : undefined,
     failedOnly: url.searchParams.get("failedOnly") === "true",
+    archived: url.searchParams.get("archived") === "true",
   };
 
   const validEvents = await fetchEvents(env, options);
   return json(validEvents, 200, request);
+}
+
+// PATCH /api/events/:id/archive
+async function handleArchiveToggle(request: Request, env: Env, eventId: string): Promise<Response> {
+  if (!env.DB) return databaseUnavailable(request);
+
+  const result = await toggleArchive(env, eventId);
+  if (!result) {
+    return json({ error: "Event not found" }, 404, request);
+  }
+  return json(result, 200, request);
 }
 
 // GET /api/stats
@@ -547,6 +560,11 @@ export const app = {
 
     if (url.pathname === "/api/events" && request.method === "GET") {
       return handleEvents(request, env);
+    }
+    if (url.pathname.startsWith("/api/events/") && url.pathname.endsWith("/archive") && request.method === "PATCH") {
+      const pathParts = url.pathname.split("/");
+      const eventId = decodeURIComponent(pathParts[3]);
+      return handleArchiveToggle(request, env, eventId);
     }
     if (url.pathname === "/api/stats" && request.method === "GET") {
       return handleStats(request, env);
