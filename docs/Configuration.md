@@ -134,6 +134,8 @@ Non-sensitive configuration stored in `wrangler.toml`.
 |----------|---------|---------|
 | `CF_ACCESS_AUD` | Cloudflare Access audience tag | (not set) |
 | `CF_ACCESS_TEAM_DOMAIN` | Cloudflare Access team domain | (not set) |
+| `APP_TITLE` | Custom dashboard title | `Setup Manager HUD` |
+| `LOGO_URL` | Custom logo URL | (not set) |
 
 ```toml
 [vars]
