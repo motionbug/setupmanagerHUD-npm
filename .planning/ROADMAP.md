@@ -30,6 +30,7 @@
 
 - [ ] **Phase 7: Database & API Foundation** - Backend infrastructure for archive state
 - [x] **Phase 8: Archive UI** - Dashboard controls for archiving records - completed 2026-05-20
+- [ ] **Phase 8.1: Polish: optimistic fade animation** (INSERTED) - Urgent polish work
 
 ## Phase Details
 
@@ -63,9 +64,21 @@ Plans:
 - [x] 08-01-PLAN.md — shadcn components (Tabs, Sonner) and Active/Archived toggle
 - [x] 08-02-PLAN.md — Archive button on rows with optimistic updates and rollback
 
+### Phase 8.1: Polish: optimistic fade animation
+**Goal**: Archive/unarchive animation completes visibly before row removal from DOM
+**Depends on**: Phase 8
+**Requirements**: None (polish phase)
+**Success Criteria** (what must be TRUE):
+  1. Row fades to opacity 0 over ~200ms before being removed from DOM
+  2. Animation completes before row is removed from events array
+  3. Rollback on failure still works correctly
+**Plans**: 1 plan
+Plans:
+- [ ] 08.1-01-PLAN.md — Delayed state removal and CSS transition update
+
 ## Progress
 
-**Execution Order:** Phases 1-7 complete, Phase 8 next
+**Execution Order:** Phases 1-8 complete, Phase 8.1 next
 
 | Phase | Milestone | Plans Complete | Status | Completed |
 |-------|-----------|----------------|--------|-----------|
@@ -77,6 +90,7 @@ Plans:
 | 6. Deployment Automation | v1.1 | 2/2 | Complete | 2026-05-19 |
 | 7. Database & API Foundation | v1.2 | 2/2 | Complete | 2026-05-20 |
 | 8. Archive UI | v1.2 | 2/2 | Complete | 2026-05-20 |
+| 8.1 Polish: optimistic fade animation | v1.2 | 0/1 | Planned | - |
 
 ---
-*Last updated: 2026-05-20 after Phase 8 execution complete*
+*Last updated: 2026-05-21 after Phase 8.1 planning*
