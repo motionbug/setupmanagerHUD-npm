@@ -29,6 +29,8 @@
     "dev:worker": "wrangler dev",
     "typecheck": "tsc --noEmit",
     "test": "npm run build && vitest run",
+    "test:components": "vitest run --config vitest.config.components.ts",
+    "test:all": "npm run test && npm run test:components",
     "test:watch": "npm run build && vitest"
   },
   "engines": {
@@ -65,10 +67,14 @@
     "@cloudflare/vitest-pool-workers": "^0.14.7",
     "@cloudflare/workers-types": "^4.20241127.0",
     "@tailwindcss/vite": "^4.0.0",
+    "@testing-library/jest-dom": "^6.9.1",
+    "@testing-library/react": "^16.3.2",
+    "@testing-library/user-event": "^14.6.1",
     "@types/node": "^25.2.1",
     "@types/react": "^19.0.0",
     "@types/react-dom": "^19.0.0",
     "@vitejs/plugin-react": "^4.3.0",
+    "jsdom": "^29.1.1",
     "shx": "^0.4.0",
     "tailwindcss": "^4.0.0",
     "tsup": "^8.5.1",

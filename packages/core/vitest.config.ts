@@ -6,5 +6,10 @@ export default defineConfig({
     pool: cloudflarePool({
       wrangler: { configPath: "./wrangler.toml" },
     }),
+    exclude: [
+      "**/node_modules/**",
+      "**/dist/**",
+      "**/*.{test,spec}.{tsx,jsx}",
+    ],
   },
 });
