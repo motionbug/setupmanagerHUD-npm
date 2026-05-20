@@ -207,7 +207,7 @@ The Durable Object handles WebSocket connections. This is pre-configured and sho
 
 ```toml
 [assets]
-directory = "dist"
+directory = "./dist"
 ```
 
 The React dashboard is built to `dist/` and served as static assets.
