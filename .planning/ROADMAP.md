@@ -3,7 +3,8 @@
 ## Milestones
 
 - [x] **v1.0 Documentation Update** - Phases 1-3 (shipped 2026-04-25) - [archive](milestones/v1.0-ROADMAP.md)
-- [ ] **v1.1 NPM Package Upgrade Path** - Phases 4-6 (in progress)
+- [x] **v1.1 NPM Package Upgrade Path** - Phases 4-6 (shipped 2026-05-20) - [archive](milestones/v1.1-ROADMAP.md)
+- [ ] **v1.2 Archive State** - Phases 7-8 (in progress)
 
 ## Phases
 
@@ -16,73 +17,66 @@
 
 </details>
 
-### v1.1 NPM Package Upgrade Path (In Progress)
+<details>
+<summary>v1.1 NPM Package Upgrade Path (Phases 4-6) - SHIPPED 2026-05-20</summary>
 
-**Milestone Goal:** Enable zero-conflict upgrades by extracting core app into an NPM package that administrators install as a dependency.
+- [x] Phase 4: Package Extraction (3/3 plans) - completed 2026-05-19
+- [x] Phase 5: Starter Template (3/3 plans) - completed 2026-05-19
+- [x] Phase 6: Deployment Automation (2/2 plans) - completed 2026-05-19
 
-- [ ] **Phase 4: Package Extraction** - Bundle core app as NPM package with config interface
-- [x] **Phase 5: Starter Template** - Create minimal template repo with postinstall sync (completed 2026-05-19)
-- [x] **Phase 6: Deployment Automation** - Pages deployment workflow and documentation (completed 2026-05-19)
+</details>
+
+### v1.2 Archive State
+
+- [ ] **Phase 7: Database & API Foundation** - Backend infrastructure for archive state
+- [ ] **Phase 8: Archive UI** - Dashboard controls for archiving records
 
 ## Phase Details
 
-### Phase 4: Package Extraction
-**Goal**: Core app is bundled as an installable NPM package with clean configuration API
-**Depends on**: Phase 3
-**Requirements**: PKG-01, PKG-02
+### Phase 7: Database & API Foundation
+**Goal**: Backend supports archive state with efficient queries and toggle endpoint
+**Depends on**: Nothing (first phase of v1.2)
+**Requirements**: DB-01, DB-02, API-01, API-02, API-03
 **Success Criteria** (what must be TRUE):
-  1. Running `npm install @motionbug/setupmanagerhud-core` installs a working package
-  2. Package exports a configuration function that accepts Cloudflare bindings
-  3. Built React frontend is included in the package
-  4. Worker entry point is included and functional
-**Plans**: 3 plans
-Plans:
-- [x] 04-01-PLAN.md — Monorepo structure and tsup build configuration
-- [x] 04-02-PLAN.md — Dual export refactor and migration sync script
-- [ ] 04-03-PLAN.md — Test consumer validation
-
-### Phase 5: Starter Template
-**Goal**: Administrators can clone a minimal template and deploy with their config
-**Depends on**: Phase 4
-**Requirements**: TPL-01, TPL-02, TPL-03, TPL-04
-**Success Criteria** (what must be TRUE):
-  1. Starter template contains only essential files (package.json, wrangler.toml, entry point)
-  2. Running `npm install` in template copies D1 migrations from node_modules to ./migrations
-  3. `npm run upgrade` and `npm run deploy` commands work as expected
-  4. postinstall script works on Windows (via shx)
-**Plans**: 3 plans
-Plans:
-- [x] 05-01-PLAN.md — Core package /api/config endpoint and Dashboard UI (version badge, branding)
-- [x] 05-02-PLAN.md — Starter template files and upgrade script
-- [x] 05-03-PLAN.md — Documentation and integration verification
-
-### Phase 6: Deployment Automation
-**Goal**: Administrators can deploy via GitHub Actions with one-click setup
-**Depends on**: Phase 5
-**Requirements**: DEP-01, DEP-02, DEP-03, DEP-04
-**Success Criteria** (what must be TRUE):
-  1. GitHub Actions workflow deploys to Cloudflare Pages successfully
-  2. GitHub Actions workflow runs D1 migrations before deployment
-  3. Deploy documentation walks admin through complete setup
-  4. "Deploy via GitHub Template" workflow guides user to create repo, input secrets (CLOUDFLARE_API_TOKEN, etc.), and auto-triggers migration + deployment
+  1. D1 database has is_archived column on events table
+  2. GET /api/events returns only non-archived records by default
+  3. GET /api/events?archived=true returns all records including archived
+  4. PATCH /api/events/:id/archive toggles a record's archive state and returns updated record
+  5. Archived queries perform efficiently (partial index working)
 **Plans**: 2 plans
 Plans:
-- [x] 06-01-PLAN.md — Defensive GitHub Actions workflow with D1 migrations
-- [x] 06-02-PLAN.md — Starter README with template badge and setup documentation
+- [x] 07-01-PLAN.md — D1 migration adding is_archived column and partial index
+- [x] 07-02-PLAN.md — Archive filtering in fetchEvents and PATCH toggle endpoint
+
+### Phase 8: Archive UI
+**Goal**: Admins can archive and unarchive enrollment records from the dashboard
+**Depends on**: Phase 7
+**Requirements**: UI-01, UI-02, UI-03, UI-04, UI-05
+**Success Criteria** (what must be TRUE):
+  1. Filter toggle on dashboard allows admin to show/hide archived records
+  2. Archive button appears on event rows when viewing active records
+  3. Unarchive button appears on event rows when viewing archived records
+  4. Clicking archive/unarchive immediately updates the UI (optimistic)
+  5. If API call fails, row is restored and error toast is shown
+**Plans**: 2 plans
+Plans:
+- [ ] 08-01-PLAN.md — shadcn components (Tabs, Sonner) and Active/Archived toggle
+- [ ] 08-02-PLAN.md — Archive button on rows with optimistic updates and rollback
 
 ## Progress
 
-**Execution Order:**
-Phases execute in numeric order: 4 -> 5 -> 6
+**Execution Order:** Phases 1-7 complete, Phase 8 next
 
 | Phase | Milestone | Plans Complete | Status | Completed |
 |-------|-----------|----------------|--------|-----------|
 | 1. Wiki Foundation | v1.0 | 1/1 | Complete | 2026-04-19 |
 | 2. Wiki Content | v1.0 | 2/2 | Complete | 2026-04-20 |
 | 3. README Integration | v1.0 | 1/1 | Complete | 2026-04-25 |
-| 4. Package Extraction | v1.1 | 2/3 | Executing | - |
+| 4. Package Extraction | v1.1 | 3/3 | Complete | 2026-05-19 |
 | 5. Starter Template | v1.1 | 3/3 | Complete | 2026-05-19 |
 | 6. Deployment Automation | v1.1 | 2/2 | Complete | 2026-05-19 |
+| 7. Database & API Foundation | v1.2 | 2/2 | Complete | 2026-05-20 |
+| 8. Archive UI | v1.2 | 0/2 | Not started | - |
 
 ---
-*Last updated: 2026-05-19 after 06-02-PLAN.md execution*
+*Last updated: 2026-05-20 after Phase 8 planning*
