@@ -8,7 +8,7 @@ import { Filters } from "./Filters";
 import { ConnectionStatus } from "./ConnectionStatus";
 import { ThemeToggle } from "./ThemeToggle";
 import { Skeleton } from "@/components/ui/skeleton";
-import type { FilterState } from "@/types";
+import type { FilterState, StoredEvent } from "@/types";
 import { isFinishedWebhook } from "@/types";
 
 type AppConfig = {
@@ -20,8 +20,10 @@ type AppConfig = {
 };
 
 export function App() {
-  const { connected, events, stats, health } = useWebSocket();
+  const { connected, events: wsEvents, stats, health } = useWebSocket();
   const [config, setConfig] = React.useState<AppConfig | null>(null);
+  const [showArchived, setShowArchived] = React.useState(false);
+  const [archivedEvents, setArchivedEvents] = React.useState<StoredEvent[]>([]);
   const [filters, setFilters] = React.useState<FilterState>({
     eventType: "all",
     macOSVersion: "",
@@ -29,6 +31,25 @@ export function App() {
     timeRange: "all",
     search: "",
   });
+
+  // Fetch archived events when showArchived is true
+  React.useEffect(() => {
+    if (showArchived) {
+      fetch("/api/events?archived=true")
+        .then((res) => {
+          if (!res.ok) throw new Error(`Events fetch failed: ${res.status}`);
+          return res.json();
+        })
+        .then((data) => setArchivedEvents(data as StoredEvent[]))
+        .catch((err) => {
+          console.warn("Failed to load archived events:", err.message);
+          setArchivedEvents([]);
+        });
+    }
+  }, [showArchived]);
+
+  // Use WebSocket events for active view, fetched events for archived view
+  const events = showArchived ? archivedEvents : wsEvents;
 
   React.useEffect(() => {
     fetch("/api/config")
@@ -164,7 +185,13 @@ export function App() {
           <div className="panel">
             <div className="panel-header flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
               <span className="section-title">Recent Events</span>
-              <Filters filters={filters} onFiltersChange={setFilters} events={events} />
+              <Filters
+                filters={filters}
+                onFiltersChange={setFilters}
+                events={events}
+                showArchived={showArchived}
+                onShowArchivedChange={setShowArchived}
+              />
             </div>
             <div className="p-0">
               <EventsTable events={filteredEvents} />
