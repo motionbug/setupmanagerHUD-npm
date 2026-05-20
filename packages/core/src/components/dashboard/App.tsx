@@ -8,6 +8,7 @@ import { Filters } from "./Filters";
 import { ConnectionStatus } from "./ConnectionStatus";
 import { ThemeToggle } from "./ThemeToggle";
 import { Skeleton } from "@/components/ui/skeleton";
+import { toast } from "sonner";
 import type { FilterState, StoredEvent } from "@/types";
 import { isFinishedWebhook } from "@/types";
 
@@ -24,6 +25,7 @@ export function App() {
   const [config, setConfig] = React.useState<AppConfig | null>(null);
   const [showArchived, setShowArchived] = React.useState(false);
   const [archivedEvents, setArchivedEvents] = React.useState<StoredEvent[]>([]);
+  const [archivingIds, setArchivingIds] = React.useState<Set<string>>(new Set());
   const [filters, setFilters] = React.useState<FilterState>({
     eventType: "all",
     macOSVersion: "",
@@ -62,6 +64,76 @@ export function App() {
         console.warn("Failed to load config, using defaults:", err.message);
       });
   }, []);
+
+  const handleArchive = React.useCallback(
+    async (eventId: string, originalIndex: number) => {
+      // Add to archivingIds to trigger fade transition
+      setArchivingIds((prev) => new Set(prev).add(eventId));
+
+      // Store reference to event for potential rollback
+      const currentEvents = showArchived ? archivedEvents : wsEvents;
+      const removedEvent = currentEvents.find((e) => e.eventId === eventId);
+
+      // After transition duration, remove from local state
+      await new Promise((resolve) => setTimeout(resolve, 150));
+
+      // Remove event from appropriate array
+      if (showArchived) {
+        setArchivedEvents((prev) => prev.filter((e) => e.eventId !== eventId));
+      }
+      // Note: wsEvents are managed by WebSocket hook, so we only handle archived events locally
+
+      try {
+        const res = await fetch(`/api/events/${encodeURIComponent(eventId)}/archive`, {
+          method: "PATCH",
+        });
+
+        if (!res.ok) {
+          throw new Error(`Archive request failed: ${res.status}`);
+        }
+
+        // Success - remove from archivingIds
+        setArchivingIds((prev) => {
+          const next = new Set(prev);
+          next.delete(eventId);
+          return next;
+        });
+
+        // If we archived from active view, refetch archived events
+        // If we unarchived from archived view, the wsEvents will update via WebSocket
+        if (showArchived) {
+          // Refetch archived events after unarchive
+          fetch("/api/events?archived=true")
+            .then((res) => res.json())
+            .then((data) => setArchivedEvents(data as StoredEvent[]))
+            .catch(() => {});
+        }
+      } catch {
+        // Rollback: remove from archivingIds
+        setArchivingIds((prev) => {
+          const next = new Set(prev);
+          next.delete(eventId);
+          return next;
+        });
+
+        // Rollback: re-insert event at original position
+        if (removedEvent && showArchived) {
+          setArchivedEvents((prev) => {
+            const updated = [...prev];
+            updated.splice(originalIndex, 0, removedEvent);
+            return updated;
+          });
+        }
+
+        // Show error toast
+        const action = showArchived ? "Unarchive" : "Archive";
+        toast.error(`${action} failed`, {
+          description: `Could not ${action.toLowerCase()} this enrollment. Please try again.`,
+        });
+      }
+    },
+    [showArchived, archivedEvents, wsEvents]
+  );
 
   const filteredEvents = React.useMemo(() => {
     return events.filter((event) => {
@@ -194,7 +266,12 @@ export function App() {
               />
             </div>
             <div className="p-0">
-              <EventsTable events={filteredEvents} />
+              <EventsTable
+                events={filteredEvents}
+                showArchived={showArchived}
+                archivingIds={archivingIds}
+                onArchive={handleArchive}
+              />
             </div>
           </div>
         </div>
