@@ -13,7 +13,11 @@ import {
   ArrowDown01Icon,
   ArrowUp01Icon,
   ArrowRight01Icon,
+  Archive01Icon,
+  ArchiveArrowUpIcon,
 } from "@hugeicons/core-free-icons";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
+import { cn } from "@/lib/utils";
 import type { StoredEvent, SetupManagerWebhook } from "@/types";
 import { isFinishedWebhook } from "@/types";
 
@@ -75,9 +79,12 @@ function NetworkIndicator({ download, upload }: { download?: number; upload?: nu
 interface EventsTableProps {
   events: StoredEvent[];
   maxVisible?: number;
+  showArchived: boolean;
+  archivingIds: Set<string>;
+  onArchive: (eventId: string, index: number) => void;
 }
 
-export function EventsTable({ events, maxVisible = 50 }: EventsTableProps) {
+export function EventsTable({ events, maxVisible = 50, showArchived, archivingIds, onArchive }: EventsTableProps) {
   const [expandedRows, setExpandedRows] = React.useState<Set<string>>(new Set());
   const visibleEvents = events.slice(0, maxVisible);
 
@@ -119,28 +126,35 @@ export function EventsTable({ events, maxVisible = 50 }: EventsTableProps) {
             <TableHead className="text-center">Network</TableHead>
             <TableHead>Serial</TableHead>
             <TableHead>Model</TableHead>
-            <TableHead>Actions</TableHead>
+            <TableHead>Results</TableHead>
+            <TableHead className="w-12"></TableHead>
           </TableRow>
         </TableHeader>
         <TableBody>
           {visibleEvents.length === 0 ? (
             <TableRow>
-              <TableCell colSpan={9} className="text-center py-16 text-lg text-ink-faint">
+              <TableCell colSpan={10} className="text-center py-16 text-lg text-ink-faint">
                 No events yet. Waiting for webhook data...
               </TableCell>
             </TableRow>
           ) : (
-            visibleEvents.map((event) => {
+            visibleEvents.map((event, rowIndex) => {
               const payload = event.payload;
               const isExpanded = expandedRows.has(event.eventId);
               const isStarted = payload.event === "com.jamf.setupmanager.started";
               const isFinished = isFinishedWebhook(payload);
               const actions = isFinished ? (payload.enrollmentActions || []) : [];
               const failedCount = actions.filter((a) => a.status === "failed").length;
+              const isArchiving = archivingIds.has(event.eventId);
 
               return (
                 <React.Fragment key={event.eventId}>
-                  <TableRow className="hover:bg-surface-raised border-0">
+                  <TableRow
+                    className={cn(
+                      "hover:bg-surface-raised border-0",
+                      isArchiving && "opacity-50 pointer-events-none transition-opacity duration-150"
+                    )}
+                  >
                     <TableCell className="py-3.5 px-4">
                       <Button
                         variant="ghost"
@@ -201,10 +215,33 @@ export function EventsTable({ events, maxVisible = 50 }: EventsTableProps) {
                         <span className="text-ink-ghost">—</span>
                       )}
                     </TableCell>
+                    <TableCell className="py-3.5 px-4">
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            className="h-8 w-8 hover:bg-control-hover rounded-lg"
+                            onClick={() => onArchive(event.eventId, rowIndex)}
+                            disabled={isArchiving}
+                            aria-label={showArchived ? "Unarchive" : "Archive"}
+                          >
+                            <DashboardIcon
+                              icon={showArchived ? ArchiveArrowUpIcon : Archive01Icon}
+                              size={18}
+                              className="text-ink-muted"
+                            />
+                          </Button>
+                        </TooltipTrigger>
+                        <TooltipContent side="top">
+                          {showArchived ? "Unarchive" : "Archive"}
+                        </TooltipContent>
+                      </Tooltip>
+                    </TableCell>
                   </TableRow>
                   {isExpanded && (
                     <TableRow className="bg-surface-raised border-0">
-                      <TableCell colSpan={9} className="p-6">
+                      <TableCell colSpan={10} className="p-6">
                         <EventDetail payload={payload} />
                       </TableCell>
                     </TableRow>
