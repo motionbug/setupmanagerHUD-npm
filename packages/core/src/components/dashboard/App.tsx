@@ -32,10 +32,13 @@ export function App() {
 
   React.useEffect(() => {
     fetch("/api/config")
-      .then((res) => res.json())
+      .then((res) => {
+        if (!res.ok) throw new Error(`Config fetch failed: ${res.status}`);
+        return res.json();
+      })
       .then((data) => setConfig(data as AppConfig))
-      .catch(() => {
-        // Silent failure - config stays null, defaults used
+      .catch((err) => {
+        console.warn("Failed to load config, using defaults:", err.message);
       });
   }, []);
 

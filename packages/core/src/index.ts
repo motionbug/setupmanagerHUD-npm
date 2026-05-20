@@ -485,16 +485,20 @@ async function handleConfig(request: Request, env: Env): Promise<Response> {
   };
 
   try {
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 5000);
     const res = await fetch(
-      "https://registry.npmjs.org/@motionbug/setupmanagerhud-core/latest"
+      "https://registry.npmjs.org/@motionbug/setupmanagerhud-core/latest",
+      { signal: controller.signal }
     );
+    clearTimeout(timeoutId);
     if (res.ok) {
       const data = (await res.json()) as { version: string };
       config.latestVersion = data.version;
       config.updateAvailable = data.version !== PACKAGE_VERSION;
     }
   } catch {
-    // Silently ignore registry fetch failures — latestVersion stays null
+    // Silently ignore registry fetch failures or timeouts — latestVersion stays null
   }
 
   return json(config, 200, request);
