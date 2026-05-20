@@ -242,6 +242,8 @@ Response:
 }
 ```
 
+The endpoint returns **HTTP 200** when healthy and **HTTP 503** when degraded.
+
 | Field | Healthy Value | Problem Value |
 |-------|--------------|---------------|
 | `status` | `healthy` | `degraded` |
