@@ -111,7 +111,7 @@ Run `npm run typecheck` and `npm test` before PRs. Cover webhook auth, payload v
 
 Send test webhooks with the dummy data script:
 ```bash
-WORKER_URL=https://your-worker.workers.dev node scripts/send-dummy-events.js
+WORKER_URL=https://your-worker.workers.dev node packages/core/scripts/send-dummy-events.js
 ```
 
 Or manually:
