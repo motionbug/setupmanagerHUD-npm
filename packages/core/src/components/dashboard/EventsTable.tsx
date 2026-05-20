@@ -152,7 +152,7 @@ export function EventsTable({ events, maxVisible = 50, showArchived, archivingId
                   <TableRow
                     className={cn(
                       "hover:bg-surface-raised border-0",
-                      isArchiving && "opacity-50 pointer-events-none transition-opacity duration-150"
+                      isArchiving && "opacity-0 pointer-events-none transition-opacity duration-200"
                     )}
                   >
                     <TableCell className="py-3.5 px-4">

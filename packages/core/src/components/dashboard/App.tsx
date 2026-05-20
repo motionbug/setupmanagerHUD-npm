@@ -26,6 +26,7 @@ export function App() {
   const [showArchived, setShowArchived] = React.useState(false);
   const [archivedEvents, setArchivedEvents] = React.useState<StoredEvent[]>([]);
   const [archivingIds, setArchivingIds] = React.useState<Set<string>>(new Set());
+  const [hiddenEventIds, setHiddenEventIds] = React.useState<Set<string>>(new Set());
   const [filters, setFilters] = React.useState<FilterState>({
     eventType: "all",
     macOSVersion: "",
@@ -51,7 +52,10 @@ export function App() {
   }, [showArchived]);
 
   // Use WebSocket events for active view, fetched events for archived view
-  const events = showArchived ? archivedEvents : wsEvents;
+  // Filter out hidden events (archived from active view)
+  const events = showArchived
+    ? archivedEvents
+    : wsEvents.filter((e) => !hiddenEventIds.has(e.eventId));
 
   React.useEffect(() => {
     fetch("/api/config")
@@ -67,63 +71,74 @@ export function App() {
 
   const handleArchive = React.useCallback(
     async (eventId: string, originalIndex: number) => {
-      // Add to archivingIds to trigger fade transition
-      setArchivingIds((prev) => new Set(prev).add(eventId));
-
-      // Store reference to event for potential rollback
+      // Store reference to event for potential rollback BEFORE any state changes
       const currentEvents = showArchived ? archivedEvents : wsEvents;
       const removedEvent = currentEvents.find((e) => e.eventId === eventId);
 
-      // After transition duration, remove from local state
-      await new Promise((resolve) => setTimeout(resolve, 150));
+      // Mark row as archiving immediately — triggers CSS fade transition
+      setArchivingIds((prev) => new Set(prev).add(eventId));
 
-      // Remove event from appropriate array
+      // Start API call immediately (don't await yet)
+      const apiPromise = fetch(`/api/events/${encodeURIComponent(eventId)}/archive`, {
+        method: "PATCH",
+      });
+
+      // Delay visual removal by 200ms to let CSS fade complete
+      await new Promise((resolve) => setTimeout(resolve, 200));
+
+      // Now hide/remove the event from the visible array
       if (showArchived) {
         setArchivedEvents((prev) => prev.filter((e) => e.eventId !== eventId));
+      } else {
+        setHiddenEventIds((prev) => new Set(prev).add(eventId));
       }
-      // Note: wsEvents are managed by WebSocket hook, so we only handle archived events locally
 
       try {
-        const res = await fetch(`/api/events/${encodeURIComponent(eventId)}/archive`, {
-          method: "PATCH",
-        });
+        const res = await apiPromise;
 
         if (!res.ok) {
           throw new Error(`Archive request failed: ${res.status}`);
         }
 
-        // Success - remove from archivingIds
+        // Success — clean up archivingIds and handle view transition
         setArchivingIds((prev) => {
           const next = new Set(prev);
           next.delete(eventId);
           return next;
         });
 
-        // If we archived from active view, refetch archived events
-        // If we unarchived from archived view, the wsEvents will update via WebSocket
+        // If we unarchived from archived view, unhide it in active view
         if (showArchived) {
-          // Refetch archived events after unarchive
-          fetch("/api/events?archived=true")
-            .then((res) => res.json())
-            .then((data) => setArchivedEvents(data as StoredEvent[]))
-            .catch(() => {});
-        }
-      } catch {
-        // Rollback: remove from archivingIds
-        setArchivingIds((prev) => {
-          const next = new Set(prev);
-          next.delete(eventId);
-          return next;
-        });
-
-        // Rollback: re-insert event at original position
-        if (removedEvent && showArchived) {
-          setArchivedEvents((prev) => {
-            const updated = [...prev];
-            updated.splice(originalIndex, 0, removedEvent);
-            return updated;
+          setHiddenEventIds((prev) => {
+            const next = new Set(prev);
+            next.delete(eventId);
+            return next;
           });
         }
+      } catch {
+        // Rollback: re-insert event at original position
+        if (removedEvent) {
+          if (showArchived) {
+            setArchivedEvents((prev) => {
+              const updated = [...prev];
+              updated.splice(originalIndex, 0, removedEvent);
+              return updated;
+            });
+          } else {
+            setHiddenEventIds((prev) => {
+              const next = new Set(prev);
+              next.delete(eventId);
+              return next;
+            });
+          }
+        }
+
+        // Clean up archivingIds on failure
+        setArchivingIds((prev) => {
+          const next = new Set(prev);
+          next.delete(eventId);
+          return next;
+        });
 
         // Show error toast
         const action = showArchived ? "Unarchive" : "Archive";
