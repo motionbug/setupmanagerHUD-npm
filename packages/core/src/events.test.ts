@@ -3,6 +3,7 @@ import {
   fetchEvents,
   fetchEventStats,
   insertEvent,
+  toggleArchive,
 } from "./events";
 import type { StoredEvent } from "./types";
 
@@ -164,6 +165,22 @@ describe("events D1 storage", () => {
         50,
       );
     });
+
+    it("filters out archived records by default", async () => {
+      all.mockResolvedValue({ results: [] });
+
+      await fetchEvents(mockEnv, {});
+
+      expect(prepare).toHaveBeenCalledWith(expect.stringContaining("is_archived = 0"));
+    });
+
+    it("includes archived records when archived=true", async () => {
+      all.mockResolvedValue({ results: [] });
+
+      await fetchEvents(mockEnv, { archived: true });
+
+      expect(prepare).toHaveBeenCalledWith(expect.not.stringContaining("is_archived"));
+    });
   });
 
   describe("fetchEventStats", () => {
@@ -190,6 +207,42 @@ describe("events D1 storage", () => {
         devices: 8,
         lastEventTime: 2000,
       });
+    });
+  });
+
+  describe("toggleArchive", () => {
+    it("toggles archive state and returns updated record", async () => {
+      first.mockResolvedValue({
+        event_id: "test-event-1",
+        is_archived: 1,
+      });
+
+      const result = await toggleArchive(mockEnv, "test-event-1");
+
+      expect(prepare).toHaveBeenCalledWith(expect.stringContaining("UPDATE events"));
+      expect(prepare).toHaveBeenCalledWith(expect.stringContaining("SET is_archived = 1 - is_archived"));
+      expect(prepare).toHaveBeenCalledWith(expect.stringContaining("RETURNING"));
+      expect(bind).toHaveBeenCalledWith("test-event-1");
+      expect(result).toEqual({ eventId: "test-event-1", isArchived: true });
+    });
+
+    it("returns null when event not found", async () => {
+      first.mockResolvedValue(null);
+
+      const result = await toggleArchive(mockEnv, "nonexistent");
+
+      expect(result).toBeNull();
+    });
+
+    it("returns isArchived: false when toggled to unarchived", async () => {
+      first.mockResolvedValue({
+        event_id: "test-event-1",
+        is_archived: 0,
+      });
+
+      const result = await toggleArchive(mockEnv, "test-event-1");
+
+      expect(result).toEqual({ eventId: "test-event-1", isArchived: false });
     });
   });
 
