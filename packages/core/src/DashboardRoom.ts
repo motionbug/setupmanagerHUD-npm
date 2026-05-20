@@ -79,7 +79,9 @@ export class DashboardRoom implements DurableObject {
   async webSocketMessage(ws: WebSocket, message: string | ArrayBuffer): Promise<void> {
     try {
       const messageLength =
-        typeof message === "string" ? message.length : message.byteLength;
+        typeof message === "string"
+          ? new TextEncoder().encode(message).length
+          : message.byteLength;
 
       if (messageLength > DashboardRoom.MAX_WS_MESSAGE_SIZE) {
         ws.send(JSON.stringify({ type: "error", message: "Message too large" }));

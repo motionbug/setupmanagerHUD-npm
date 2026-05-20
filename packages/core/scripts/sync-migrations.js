@@ -58,11 +58,16 @@ function main() {
 
     if (!fs.existsSync(destFile)) {
       try {
-        fs.copyFileSync(sourceFile, destFile);
+        // Use exclusive flag to atomically check and write (WR-04: avoid TOCTOU race)
+        const content = fs.readFileSync(sourceFile);
+        fs.writeFileSync(destFile, content, { flag: 'wx' });
         console.log(`Copied migration: ${file}`);
       } catch (err) {
-        console.error(`Error copying ${file}: ${err.message}`);
-        // Continue with other files even if one fails
+        if (err.code === 'EEXIST') {
+          console.log(`Skipped (exists): ${file}`);
+        } else {
+          console.error(`Error copying ${file}: ${err.message}`);
+        }
       }
     } else {
       console.log(`Skipped (exists): ${file}`);

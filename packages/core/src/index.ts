@@ -201,10 +201,21 @@ async function validateAccessJwt(
       return new Response("Unauthorized: invalid audience", { status: 403 });
     }
 
-    // Validate expiration
+    // Validate time-based claims with clock skew tolerance
+    const CLOCK_SKEW_TOLERANCE = 60; // seconds
     const now = Math.floor(Date.now() / 1000);
-    if (payloadJson.exp && payloadJson.exp < now) {
+
+    // Token MUST have exp claim (CR-01)
+    if (!payloadJson.exp) {
+      return new Response("Unauthorized: token missing expiration", { status: 403 });
+    }
+    if (payloadJson.exp < now - CLOCK_SKEW_TOLERANCE) {
       return new Response("Unauthorized: token expired", { status: 403 });
+    }
+
+    // Validate not-before if present (CR-02)
+    if (payloadJson.nbf && payloadJson.nbf > now + CLOCK_SKEW_TOLERANCE) {
+      return new Response("Unauthorized: token not yet valid", { status: 403 });
     }
 
     // Validate issuer
