@@ -29,7 +29,7 @@
 ### v1.2 Archive State
 
 - [ ] **Phase 7: Database & API Foundation** - Backend infrastructure for archive state
-- [ ] **Phase 8: Archive UI** - Dashboard controls for archiving records
+- [x] **Phase 8: Archive UI** - Dashboard controls for archiving records - completed 2026-05-20
 
 ## Phase Details
 
@@ -60,8 +60,8 @@ Plans:
   5. If API call fails, row is restored and error toast is shown
 **Plans**: 2 plans
 Plans:
-- [ ] 08-01-PLAN.md — shadcn components (Tabs, Sonner) and Active/Archived toggle
-- [ ] 08-02-PLAN.md — Archive button on rows with optimistic updates and rollback
+- [x] 08-01-PLAN.md — shadcn components (Tabs, Sonner) and Active/Archived toggle
+- [x] 08-02-PLAN.md — Archive button on rows with optimistic updates and rollback
 
 ## Progress
 
@@ -76,7 +76,7 @@ Plans:
 | 5. Starter Template | v1.1 | 3/3 | Complete | 2026-05-19 |
 | 6. Deployment Automation | v1.1 | 2/2 | Complete | 2026-05-19 |
 | 7. Database & API Foundation | v1.2 | 2/2 | Complete | 2026-05-20 |
-| 8. Archive UI | v1.2 | 0/2 | Not started | - |
+| 8. Archive UI | v1.2 | 2/2 | Complete | 2026-05-20 |
 
 ---
-*Last updated: 2026-05-20 after Phase 8 planning*
+*Last updated: 2026-05-20 after Phase 8 execution complete*

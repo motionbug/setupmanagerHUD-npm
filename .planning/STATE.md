@@ -1,61 +1,55 @@
 ---
 gsd_state_version: 1.0
-milestone: v1.1
-milestone_name: NPM Package Upgrade Path
-status: milestone_complete
-last_updated: 2026-05-19T22:15:59.518Z
-last_activity: 2026-05-19 -- Completed 06-02-PLAN.md (README template badge and deployment docs)
+milestone: v1.2
+milestone_name: Archive State
+status: complete
+last_updated: "2026-05-20T17:56:00.000Z"
+last_activity: 2026-05-20 -- Phase 08 execution complete, v1.2 milestone complete
 progress:
-  total_phases: 3
-  completed_phases: 3
-  total_plans: 8
-  completed_plans: 8
+  total_phases: 2
+  completed_phases: 2
+  total_plans: 4
+  completed_plans: 4
   percent: 100
-stopped_at: Milestone complete (Phase 06 was final phase)
 ---
 
 # Project State
 
 ## Project Reference
 
-See: .planning/PROJECT.md (updated 2026-05-19)
+See: .planning/PROJECT.md (updated 2026-05-20)
 
 **Core value:** Real-time visibility into macOS device enrollments
-**Current focus:** Milestone complete
+**Current focus:** v1.2 Archive State - COMPLETE
 
 ## Current Position
 
-Phase: 06
-Plan: Not started
-Status: Milestone complete
-Last activity: 2026-05-19
+Phase: 8 - Archive UI
+Plan: All plans complete
+Status: Milestone v1.2 complete
+Last activity: 2026-05-20 -- Phase 08 execution complete
 
-Progress: [==========] 100% (v1.0 complete, v1.1 all phases complete)
+```
+v1.2 Progress: [##########] 100%
+Phase 7: Complete (2026-05-20)
+Phase 8: Complete (2026-05-20)
+```
 
 ## Accumulated Context
 
 ### Decisions
 
 Decisions are logged in PROJECT.md Key Decisions table.
-Recent decisions affecting current work:
+Recent decisions from v1.1:
 
-- v1.0: GitHub Wiki for docs (editable without PRs)
-- v1.1: NPM package approach for zero-conflict upgrades
-- 04-01: npm workspaces hoists dependencies to root node_modules
-- 04-01: tsup platform: browser for Cloudflare Workers compatibility
-- 04-02: Env interface exported with required ASSETS and WEBHOOK_TOKEN fields per D-17
-- 04-02: Named app export + default export preserves backwards compatibility per D-05
-- 04-02: sync-migrations.js uses additive-only logic per D-12, D-13
-- 06-01: paths filter prevents crash-loop paradox (D-01)
-- 06-01: secrets check gate validates configuration early (D-02)
-- 06-01: D1 placeholder check prevents cryptic migration errors (D-03)
-- 06-01: WEBHOOK_TOKEN is optional secret with conditional sync (D-11)
-- 06-02: GitHub Actions deployment documented as primary path (D-04)
-- 06-02: "Use this template" badge added to README (D-05)
+- NPM package architecture for zero-conflict upgrades
+- Dual export pattern (named `app` + default for backwards compatibility)
+- Additive-only migration sync (never overwrites existing migrations)
+- GitHub Actions as primary deployment path (browser-only)
 
 ### Pending Todos
 
-None.
+None - awaiting Phase 7 planning.
 
 ### Blockers/Concerns
 
@@ -70,4 +64,4 @@ Items from v1.0 milestone close (2026-04-25):
 | verification | Phase 02 wiki pages need manual push to GitHub | human_needed | 2026-04-25 |
 
 ---
-*Last updated: 2026-05-19 after Phase 06-02 execution*
+*Last updated: 2026-05-20 after v1.2 milestone complete*
