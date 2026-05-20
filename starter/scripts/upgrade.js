@@ -27,9 +27,14 @@ function main() {
   // Step 1: Update the core package
   console.log('Updating @motionbug/setupmanagerhud-core...');
   try {
-    execSync('npm update @motionbug/setupmanagerhud-core', { stdio: 'inherit' });
+    execSync('npm update @motionbug/setupmanagerhud-core', {
+      stdio: 'inherit',
+      encoding: 'utf8',
+    });
   } catch (err) {
-    console.error('Failed to update package:', err.message);
+    console.error('Failed to update package.');
+    console.error('Exit code:', err.status);
+    console.error('Message:', err.message);
     process.exit(1);
   }
 
@@ -53,14 +58,14 @@ function main() {
 
   // Step 4: Report results
   if (newMigrations.length > 0) {
-    console.log('\n⚠️  New migrations detected:');
+    console.log('\n[!] New migrations detected:');
     newMigrations.forEach((m) => console.log(`   - ${m}`));
     console.log('\nTo apply these migrations, run:');
     console.log('  npx wrangler d1 migrations apply DB --local');
     console.log('  npx wrangler d1 migrations apply DB --remote');
     console.log('\nOr re-run npm install to sync migration files first.');
   } else {
-    console.log('\n✓ All migrations up to date.');
+    console.log('\n[OK] All migrations up to date.');
   }
 }
 
