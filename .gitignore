@@ -1,0 +1,43 @@
+# Dependencies
+node_modules/
+
+# Build output
+dist/
+dist-worker/
+dist-scripts/
+
+# Cloudflare
+.wrangler/
+.dev.vars
+wrangler.production.toml
+
+# Environment
+.env
+.env.local
+.env.*.local
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Editor
+.vscode/settings.json
+.idea/
+*.swp
+*.swo
+
+# Logs
+*.log
+npm-debug.log*
+
+# Claude
+CLAUDE.md
+SECURITY_AUDIT.md
+GEMINI.md
+AGENTS.md
+/.claude
+/.planning
+
+
+# Local security notes
+setupmanagerHUD-threat-model.md
