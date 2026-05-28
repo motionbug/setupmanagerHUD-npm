@@ -8,47 +8,35 @@ Built with React, shadcn/ui, and Cloudflare Workers.
 |-----------|------------|
 | ![Dark Mode](./docs/setupmanagerhud-dark.png) | ![Light Mode](./docs/setupmanagerhud-light.png) |
 
-## Quick Start
+## Deploy
 
-**Deploy in one click:**
+**This is the npm package source repository.** To deploy Setup Manager HUD, use the starter repo:
 
 [![Deploy to Cloudflare Workers](https://deploy.workers.cloudflare.com/button)](https://deploy.workers.cloudflare.com/?url=https://github.com/motionbug/setupmanagerhud-starter)
 
-Before deploying, generate a webhook token:
+See [setupmanagerhud-starter](https://github.com/motionbug/setupmanagerhud-starter) for deployment instructions and upgrade workflow.
 
-```bash
-openssl rand -hex 24
-```
+## About This Repository
 
-See the [starter repo](https://github.com/motionbug/setupmanagerhud-starter) for full instructions.
-
-## Upgrading
-
-Updates are delivered via npm. In your deployed project:
-
-```bash
-npm run upgrade
-npm run deploy
-```
-
-## npm Package
-
-This repo publishes `@motionbug/setupmanagerhud-core` to npm. The package includes:
+This repo contains the source code for the `@motionbug/setupmanagerhud-core` npm package. The package includes:
 
 - Worker entry point and Durable Object
 - Pre-built React dashboard
 - D1 migrations
 - Sync scripts for assets and migrations
 
-For custom deployments, install the package directly:
+**Do not deploy directly from this repo.** Use the [starter template](https://github.com/motionbug/setupmanagerhud-starter) instead, which imports this package and provides the proper upgrade path.
+
+## For Contributors
+
+Development commands and architecture details are in [CLAUDE.md](CLAUDE.md).
 
 ```bash
-npm install @motionbug/setupmanagerhud-core
+npm install
+npm run dev          # Frontend on :5173
+npm run dev:worker   # Full stack on :8787
+npm test             # Run tests
 ```
-
-## Development
-
-See [CLAUDE.md](CLAUDE.md) for development commands and architecture.
 
 ## Documentation
 
