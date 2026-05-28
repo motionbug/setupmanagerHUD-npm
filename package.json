@@ -19,7 +19,12 @@
     ".": {
       "import": "./dist-worker/index.js",
       "types": "./dist-worker/index.d.ts"
-    }
+    },
+    "./sync-migrations": "./dist-scripts/sync-migrations.js",
+    "./sync-assets": "./dist-scripts/sync-assets.js"
+  },
+  "bin": {
+    "setupmanagerhud-sync": "./dist-scripts/sync-all.js"
   },
   "files": [
     "dist",
@@ -34,7 +39,7 @@
   "scripts": {
     "build:ui": "vite build",
     "build:worker": "tsup",
-    "build:scripts": "shx mkdir -p dist-scripts && shx cp scripts/sync-migrations.js scripts/sync-assets.js dist-scripts/",
+    "build:scripts": "shx mkdir -p dist-scripts && shx cp scripts/sync-migrations.js scripts/sync-assets.js scripts/sync-all.js dist-scripts/ && shx chmod +x dist-scripts/sync-all.js",
     "build": "npm run build:ui && npm run build:worker && npm run build:scripts",
     "deploy": "wrangler d1 migrations apply DB --remote && wrangler deploy",
     "prepublishOnly": "npm run build",
