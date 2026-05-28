@@ -34,7 +34,7 @@
   "scripts": {
     "build:ui": "vite build",
     "build:worker": "tsup",
-    "build:scripts": "shx mkdir -p dist-scripts && shx cp scripts/sync-migrations.js dist-scripts/",
+    "build:scripts": "shx mkdir -p dist-scripts && shx cp scripts/sync-migrations.js scripts/sync-assets.js dist-scripts/",
     "build": "npm run build:ui && npm run build:worker && npm run build:scripts",
     "deploy": "wrangler d1 migrations apply DB --remote && wrangler deploy",
     "prepublishOnly": "npm run build",
