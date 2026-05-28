@@ -26,19 +26,15 @@ jobs:
         run: npm ci
 
       - name: Run typecheck
-        working-directory: packages/core
         run: npm run typecheck
 
       - name: Run tests
-        working-directory: packages/core
         run: npm run test:all
 
       - name: Build
-        working-directory: packages/core
         run: npm run build
 
       - name: Publish to npm
-        working-directory: packages/core
         run: npm publish --provenance --access public
         env:
           NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
