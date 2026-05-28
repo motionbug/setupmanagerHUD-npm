@@ -2,7 +2,7 @@
 
 Real-time webhook dashboard for Jamf Setup Manager. Deployed to Cloudflare Workers.
 
-[![Use this template](https://img.shields.io/badge/Use%20this%20template-238636?style=for-the-badge&logo=github)](https://github.com/motionbug/setupmanagerhud-template/generate)
+[![Use this template](https://img.shields.io/badge/Use%20this%20template-238636?style=for-the-badge&logo=github)](https://github.com/motionbug/setupmanagerHUD-npm/generate)
 
 ## Deploy via GitHub Actions (Recommended)
 
@@ -97,7 +97,7 @@ APP_TITLE = "My Company HUD"
 LOGO_URL = "https://example.com/logo.png"
 ```
 
-See the [Configuration wiki](https://github.com/motionbug/setupmanagerhud/wiki/Configuration) for all available options.
+See the [Configuration docs](https://github.com/motionbug/setupmanagerHUD-npm/blob/main/docs/Configuration.md) for all available options.
 
 ## Updating
 
@@ -120,10 +120,10 @@ npx wrangler d1 migrations apply DB --remote  # for production
 
 ## Documentation
 
-- [Security](https://github.com/motionbug/setupmanagerhud/wiki/Security) - Webhook tokens, Cloudflare Access, JWT validation
-- [Configuration](https://github.com/motionbug/setupmanagerhud/wiki/Configuration) - D1 setup, environment variables, branding
-- [Troubleshooting](https://github.com/motionbug/setupmanagerhud/wiki/Troubleshooting) - Common deployment and webhook issues
+- [Security](https://github.com/motionbug/setupmanagerHUD-npm/blob/main/docs/Security.md) - Webhook tokens, Cloudflare Access, JWT validation
+- [Configuration](https://github.com/motionbug/setupmanagerHUD-npm/blob/main/docs/Configuration.md) - D1 setup, environment variables, branding
+- [Troubleshooting](https://github.com/motionbug/setupmanagerHUD-npm/blob/main/docs/Troubleshooting.md) - Common deployment and webhook issues
 
 ## License
 
-[MIT](https://github.com/motionbug/setupmanagerhud/blob/main/LICENSE)
+[MIT](https://github.com/motionbug/setupmanagerHUD-npm/blob/main/LICENSE)

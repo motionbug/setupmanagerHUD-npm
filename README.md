@@ -45,7 +45,7 @@ Save this value somewhere secure. You will need the exact same token in two plac
 
 ### 2. Deploy To Cloudflare
 
-[![Deploy to Cloudflare Workers](https://deploy.workers.cloudflare.com/button)](https://deploy.workers.cloudflare.com/?url=https://github.com/motionbug/setupmanagerhud)
+[![Deploy to Cloudflare Workers](https://deploy.workers.cloudflare.com/button)](https://deploy.workers.cloudflare.com/?url=https://github.com/motionbug/setupmanagerHUD-npm)
 
 The Deploy Button will:
 

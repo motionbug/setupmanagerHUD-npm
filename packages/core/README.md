@@ -6,7 +6,7 @@ Built with React, shadcn/ui, and Cloudflare Workers.
 
 ## Quick Start
 
-The easiest way to deploy is with the Cloudflare Deploy Button in the [main repository](https://github.com/motionbug/setupmanagerhud).
+The easiest way to deploy is with the Cloudflare Deploy Button in the [main repository](https://github.com/motionbug/setupmanagerHUD-npm).
 
 For manual setup or customization, install this package:
 
@@ -44,7 +44,7 @@ Sync the D1 migrations:
 node ./node_modules/@motionbug/setupmanagerhud-core/dist-scripts/sync-migrations.js
 ```
 
-Configure `wrangler.toml` with D1 and Durable Object bindings — see the [template](https://github.com/motionbug/setupmanagerhud/tree/main/packages/template) for a complete example.
+Configure `wrangler.toml` with D1 and Durable Object bindings — see the [starter template](https://github.com/motionbug/setupmanagerHUD-npm/tree/main/starter) for a complete example.
 
 ## What's Included
 
@@ -67,15 +67,15 @@ Security scanners like [Socket.dev](https://socket.dev) may flag the bundled Jav
 
 The flagged file (`dist/assets/index-*.js`) is the Vite-bundled React 19 frontend. Scanners detect React's reconciler doing DOM manipulation — which is its job. Socket.dev's own analysis confirms: *"no clear indicators of supply-chain malware... Risk is therefore low."*
 
-React is bundled (not a peer dependency) because Cloudflare Workers deployments require self-contained static assets. See [Security docs](https://github.com/motionbug/setupmanagerhud/blob/main/docs/Security.md#security-scanner-alerts-npm-package) for details.
+React is bundled (not a peer dependency) because Cloudflare Workers deployments require self-contained static assets. See [Security docs](https://github.com/motionbug/setupmanagerHUD-npm/blob/main/docs/Security.md#security-scanner-alerts-npm-package) for details.
 
 ## Documentation
 
-- [Main Repository](https://github.com/motionbug/setupmanagerhud) — Deploy button, full documentation
-- [Security](https://github.com/motionbug/setupmanagerhud/blob/main/docs/Security.md) — Webhook tokens, Cloudflare Access setup
-- [Configuration](https://github.com/motionbug/setupmanagerhud/blob/main/docs/Configuration.md) — D1, environment variables, wrangler.toml
-- [Troubleshooting](https://github.com/motionbug/setupmanagerhud/blob/main/docs/Troubleshooting.md) — Common issues
+- [Main Repository](https://github.com/motionbug/setupmanagerHUD-npm) — Deploy button, full documentation
+- [Security](https://github.com/motionbug/setupmanagerHUD-npm/blob/main/docs/Security.md) — Webhook tokens, Cloudflare Access setup
+- [Configuration](https://github.com/motionbug/setupmanagerHUD-npm/blob/main/docs/Configuration.md) — D1, environment variables, wrangler.toml
+- [Troubleshooting](https://github.com/motionbug/setupmanagerHUD-npm/blob/main/docs/Troubleshooting.md) — Common issues
 
 ## License
 
-[MIT](https://github.com/motionbug/setupmanagerhud/blob/main/LICENSE)
+[MIT](https://github.com/motionbug/setupmanagerHUD-npm/blob/main/LICENSE)
