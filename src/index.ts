@@ -27,7 +27,7 @@ export interface Env {
 }
 
 /** Package version - updated at release time */
-const PACKAGE_VERSION = "1.1.0";
+const PACKAGE_VERSION = "1.2.0";
 
 const SECURITY_HEADERS: Record<string, string> = {
   "X-Content-Type-Options": "nosniff",
