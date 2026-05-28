@@ -61,6 +61,14 @@ Configure `wrangler.toml` with D1 and Durable Object bindings — see the [templ
 | `CF_ACCESS_AUD` | No | Cloudflare Access audience tag |
 | `CF_ACCESS_TEAM_DOMAIN` | No | Cloudflare Access team domain |
 
+## Security Scanner Alerts
+
+Security scanners like [Socket.dev](https://socket.dev) may flag the bundled JavaScript as "high risk" due to DOM manipulation patterns. **This is a false positive.**
+
+The flagged file (`dist/assets/index-*.js`) is the Vite-bundled React 19 frontend. Scanners detect React's reconciler doing DOM manipulation — which is its job. Socket.dev's own analysis confirms: *"no clear indicators of supply-chain malware... Risk is therefore low."*
+
+React is bundled (not a peer dependency) because Cloudflare Workers deployments require self-contained static assets. See [Security docs](https://github.com/motionbug/setupmanagerhud/blob/main/docs/Security.md#security-scanner-alerts-npm-package) for details.
+
 ## Documentation
 
 - [Main Repository](https://github.com/motionbug/setupmanagerhud) — Deploy button, full documentation

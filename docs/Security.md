@@ -221,3 +221,21 @@ Add a Cloudflare WAF rate limiting rule to prevent webhook flooding:
 | Large (50+ from one IP) | 50+ | 300 req/min |
 
 > **Calculation:** Each device sends 2 webhooks per enrollment (started + finished). A rate of 30 req/min supports ~15 concurrent enrollments from a single IP. If devices share a NAT gateway, use a higher limit based on expected concurrent enrollment count.
+
+---
+
+## Security Scanner Alerts (npm Package)
+
+If you use the `@motionbug/setupmanagerhud-core` npm package, security scanners like [Socket.dev](https://socket.dev) may flag the bundled JavaScript as "high risk" due to DOM manipulation patterns.
+
+**This is a false positive.** The flagged file (`dist/assets/index-*.js`) is the Vite-bundled React 19 frontend. Security scanners detect:
+
+- Extensive DOM manipulation (React's reconciler — this is its job)
+- `dangerouslySetInnerHTML` API (standard React feature)
+- Large minified code that's hard for static analysis
+
+Socket.dev's own analysis confirms: *"no clear indicators of supply-chain malware (no external network exfiltration, credential theft, backdoor/persistence, or command execution). Risk is therefore low for malicious intent."*
+
+**Why the bundle is structured this way:** The npm package is designed for Cloudflare Workers deployment where static assets must be self-contained. React is bundled rather than listed as a peer dependency to simplify deployment.
+
+**No action required.** These alerts are informational and do not indicate a security vulnerability in Setup Manager HUD.
