@@ -7,22 +7,17 @@ import {
   Tooltip,
   ResponsiveContainer,
 } from "recharts";
-import type { StoredEvent, SetupManagerFinishedWebhook } from "@/types";
-import { isFinishedWebhook } from "@/types";
+import type { StoredEvent } from "@/types";
+import { getFinishedEvents } from "@/types";
+import { tooltipStyles, CHART_COLORS } from "@/lib/chartStyles";
 
 interface ActionsChartProps {
   events: StoredEvent[];
   embedded?: boolean;
 }
 
-const SUCCESS_COLOR = "var(--jamf-green)";
-const FAILURE_COLOR = "var(--jamf-red)";
-
 export function ActionsChart({ events, embedded = false }: ActionsChartProps) {
-  const actionData = events
-    .filter((e): e is StoredEvent & { payload: SetupManagerFinishedWebhook } =>
-      isFinishedWebhook(e.payload)
-    )
+  const actionData = getFinishedEvents(events)
     .flatMap((e) => e.payload.enrollmentActions || [])
     .reduce(
       (acc, action) => {
@@ -66,27 +61,18 @@ export function ActionsChart({ events, embedded = false }: ActionsChartProps) {
           axisLine={false}
           width={120}
         />
-        <Tooltip
-          contentStyle={{
-            backgroundColor: "var(--surface-overlay)",
-            border: "1px solid var(--edge)",
-            borderRadius: "12px",
-            fontSize: "14px",
-            padding: "12px 16px",
-          }}
-          labelStyle={{ color: "var(--ink)", fontWeight: 600, marginBottom: "4px" }}
-        />
+        <Tooltip {...tooltipStyles} />
         <Bar
           dataKey="finished"
           name="Finished"
-          fill={SUCCESS_COLOR}
+          fill={CHART_COLORS.success}
           stackId="a"
           radius={[0, 6, 6, 0]}
         />
         <Bar
           dataKey="failed"
           name="Failed"
-          fill={FAILURE_COLOR}
+          fill={CHART_COLORS.failure}
           stackId="a"
           radius={[0, 6, 6, 0]}
         />

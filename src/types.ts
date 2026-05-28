@@ -51,16 +51,28 @@ export type SetupManagerWebhook = SetupManagerStartedWebhook | SetupManagerFinis
 export function isFinishedWebhook(
   payload: SetupManagerWebhook
 ): payload is SetupManagerFinishedWebhook {
-  return payload.event === "com.jamf.setupmanager.finished";
+  return payload.event === EVENT_FINISHED;
 }
 
-/**
- * Type guard to narrow SetupManagerWebhook to SetupManagerStartedWebhook.
- */
-export function isStartedWebhook(
-  payload: SetupManagerWebhook
-): payload is SetupManagerStartedWebhook {
-  return payload.event === "com.jamf.setupmanager.started";
+export function countFailedActions(
+  actions: EnrollmentAction[] | undefined
+): number {
+  return (actions ?? []).filter((a) => a.status === "failed").length;
+}
+
+export function hasFailedActions(
+  actions: EnrollmentAction[] | undefined
+): boolean {
+  return (actions ?? []).some((a) => a.status === "failed");
+}
+
+export function getFinishedEvents(
+  events: StoredEvent[]
+): (StoredEvent & { payload: SetupManagerFinishedWebhook })[] {
+  return events.filter(
+    (e): e is StoredEvent & { payload: SetupManagerFinishedWebhook } =>
+      isFinishedWebhook(e.payload)
+  );
 }
 
 export interface StoredEvent {
@@ -96,12 +108,21 @@ const REQUIRED_BASE_FIELDS = [
 const REQUIRED_FINISHED_FIELDS = ['duration', 'finished'] as const;
 
 /**
- * Valid event types
+ * Event type constants
  */
-const VALID_EVENTS = [
-  'com.jamf.setupmanager.started',
-  'com.jamf.setupmanager.finished'
-] as const;
+export const EVENT_STARTED = "com.jamf.setupmanager.started" as const;
+export const EVENT_FINISHED = "com.jamf.setupmanager.finished" as const;
+const VALID_EVENTS = [EVENT_STARTED, EVENT_FINISHED] as const;
+
+/**
+ * Time range constants in milliseconds
+ */
+export const TIME_RANGE_MS = {
+  hour: 3_600_000,
+  day: 86_400_000,
+  week: 604_800_000,
+  month: 2_592_000_000,
+} as const;
 
 /**
  * Validates that a value is a non-empty string

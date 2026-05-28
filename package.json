@@ -82,7 +82,7 @@
     "tailwind-merge": "^3.4.0"
   },
   "devDependencies": {
-    "@cloudflare/vitest-pool-workers": "^0.14.7",
+    "@cloudflare/vitest-pool-workers": "^0.16.10",
     "@cloudflare/workers-types": "^4.20241127.0",
     "@tailwindcss/vite": "^4.0.0",
     "@testing-library/jest-dom": "^6.9.1",
@@ -100,6 +100,6 @@
     "typescript": "^5.3.3",
     "vite": "^6.0.0",
     "vitest": "^4.1.4",
-    "wrangler": "^4.61.0"
+    "wrangler": "^4.95.0"
   }
 }

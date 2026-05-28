@@ -1,5 +1,9 @@
 import {
   isFinishedWebhook,
+  countFailedActions,
+  EVENT_STARTED,
+  EVENT_FINISHED,
+  TIME_RANGE_MS,
   type SetupManagerFinishedWebhook,
   type StoredEvent,
 } from "./types";
@@ -52,7 +56,7 @@ function getActionCounts(payload: SetupManagerFinishedWebhook | null): {
 } {
   const actions = payload?.enrollmentActions ?? [];
   return {
-    failedActionCount: actions.filter((action) => action.status === "failed").length,
+    failedActionCount: countFailedActions(actions),
     totalActionCount: actions.length,
   };
 }
@@ -80,12 +84,7 @@ function addLikeFilter(
 
 function getTimeRangeCutoff(timeRange: TimeRangeFilter | undefined): number | null {
   if (!timeRange) return null;
-  const ranges: Record<TimeRangeFilter, number> = {
-    hour: 60 * 60 * 1000,
-    day: 24 * 60 * 60 * 1000,
-    week: 7 * 24 * 60 * 60 * 1000,
-  };
-  return Date.now() - ranges[timeRange];
+  return Date.now() - TIME_RANGE_MS[timeRange];
 }
 
 export async function insertEvent(
@@ -164,12 +163,12 @@ export async function fetchEvents(
 
   if (normalizedOptions.eventType === "started") {
     clauses.push("event_type = ?");
-    bindings.push("com.jamf.setupmanager.started");
+    bindings.push(EVENT_STARTED);
   }
 
   if (normalizedOptions.eventType === "finished") {
     clauses.push("event_type = ?");
-    bindings.push("com.jamf.setupmanager.finished");
+    bindings.push(EVENT_FINISHED);
   }
 
   if (normalizedOptions.eventType === "failed" || normalizedOptions.failedOnly) {

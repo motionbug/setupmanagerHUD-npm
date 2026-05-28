@@ -9,7 +9,8 @@ import {
   ResponsiveContainer,
 } from "recharts";
 import type { StoredEvent, SetupManagerFinishedWebhook } from "@/types";
-import { isFinishedWebhook } from "@/types";
+import { isFinishedWebhook, getFinishedEvents, hasFailedActions, TIME_RANGE_MS } from "@/types";
+import { tooltipStyles, CHART_COLORS } from "@/lib/chartStyles";
 
 interface EventsChartProps {
   events: StoredEvent[];
@@ -17,9 +18,6 @@ interface EventsChartProps {
 }
 
 type TimeRange = "day" | "week" | "month" | "all";
-
-const SUCCESS_COLOR = "var(--jamf-green)";
-const FAILURE_COLOR = "var(--jamf-red)";
 
 const TIME_RANGES: { value: TimeRange; label: string }[] = [
   { value: "day", label: "24h" },
@@ -79,27 +77,18 @@ export function EventsChart({ events, embedded = false }: EventsChartProps) {
               allowDecimals={false}
               width={32}
             />
-            <Tooltip
-              contentStyle={{
-                backgroundColor: "var(--surface-overlay)",
-                border: "1px solid var(--edge)",
-                borderRadius: "12px",
-                fontSize: "14px",
-                padding: "12px 16px",
-              }}
-              labelStyle={{ color: "var(--ink)", fontWeight: 600, marginBottom: "4px" }}
-            />
+            <Tooltip {...tooltipStyles} />
             <Bar
               dataKey="success"
               name="Success"
-              fill={SUCCESS_COLOR}
+              fill={CHART_COLORS.success}
               radius={[6, 6, 0, 0]}
               maxBarSize={40}
             />
             <Bar
               dataKey="failure"
               name="Failure"
-              fill={FAILURE_COLOR}
+              fill={CHART_COLORS.failure}
               radius={[6, 6, 0, 0]}
               maxBarSize={40}
             />
@@ -117,21 +106,16 @@ export function EventsChart({ events, embedded = false }: EventsChartProps) {
 }
 
 function createTimeBuckets(events: StoredEvent[], timeRange: TimeRange) {
-  const finishedEvents = events.filter(
-    (e): e is StoredEvent & { payload: SetupManagerFinishedWebhook } =>
-      isFinishedWebhook(e.payload)
-  );
+  const finishedEvents = getFinishedEvents(events);
 
   if (finishedEvents.length === 0) return [];
 
   const now = Date.now();
-  const oneHour = 3600000;
-  const oneDay = 86400000;
 
   const cutoffMap: Record<TimeRange, number> = {
-    day: now - oneDay,
-    week: now - 7 * oneDay,
-    month: now - 30 * oneDay,
+    day: now - TIME_RANGE_MS.day,
+    week: now - TIME_RANGE_MS.week,
+    month: now - TIME_RANGE_MS.month,
     all: 0,
   };
   const cutoff = cutoffMap[timeRange];
@@ -140,8 +124,7 @@ function createTimeBuckets(events: StoredEvent[], timeRange: TimeRange) {
     .map((e) => {
       const payload = e.payload;
       const time = new Date(payload.finished || payload.started).getTime();
-      const actions = payload.enrollmentActions || [];
-      const hasFailed = actions.some((a) => a.status === "failed");
+      const hasFailed = hasFailedActions(payload.enrollmentActions);
       return { time, success: !hasFailed };
     })
     .filter((e) => !isNaN(e.time) && e.time >= cutoff);
@@ -157,24 +140,24 @@ function createTimeBuckets(events: StoredEvent[], timeRange: TimeRange) {
   let maxBuckets: number;
 
   if (timeRange === "day") {
-    bucketSize = oneHour;
+    bucketSize = TIME_RANGE_MS.hour;
     formatOptions = { hour: "numeric" };
     maxBuckets = 24;
   } else if (timeRange === "week") {
-    bucketSize = oneDay;
+    bucketSize = TIME_RANGE_MS.day;
     formatOptions = { weekday: "short" };
     maxBuckets = 7;
   } else if (timeRange === "month") {
-    bucketSize = oneDay;
+    bucketSize = TIME_RANGE_MS.day;
     formatOptions = { month: "short", day: "numeric" };
     maxBuckets = 15;
   } else {
     const range = maxTime - minTime;
-    if (range <= 7 * oneDay) {
-      bucketSize = oneDay;
+    if (range <= 7 * TIME_RANGE_MS.day) {
+      bucketSize = TIME_RANGE_MS.day;
       formatOptions = { weekday: "short" };
     } else {
-      bucketSize = oneDay;
+      bucketSize = TIME_RANGE_MS.day;
       formatOptions = { month: "short", day: "numeric" };
     }
     maxBuckets = 15;

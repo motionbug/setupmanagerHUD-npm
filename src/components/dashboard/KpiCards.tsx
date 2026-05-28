@@ -6,6 +6,7 @@ import {
   AlertDiamondIcon,
 } from "@hugeicons/core-free-icons";
 import type { IconSvgElement } from "@hugeicons/react";
+import { formatDuration } from "@/lib/formatters";
 
 interface KpiCardsProps {
   started: number;
@@ -25,13 +26,6 @@ export function KpiCards({
   successRate,
   onFailedActionsClick,
 }: KpiCardsProps) {
-  const formatDuration = (seconds: number) => {
-    if (seconds < 60) return `${seconds}s`;
-    const mins = Math.floor(seconds / 60);
-    const secs = seconds % 60;
-    return `${mins}m ${secs}s`;
-  };
-
   const stages: {
     label: string;
     value: string | number;

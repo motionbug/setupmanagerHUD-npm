@@ -6,6 +6,8 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 Setup Manager HUD is a real-time webhook dashboard for Jamf Setup Manager, deployed to Cloudflare Workers. It receives webhook events from macOS devices during enrollment and displays them on a React dashboard via WebSocket.
 
+**This is the npm package source repository** (`@motionbug/setupmanagerhud-core`). Users deploy via the [starter template](https://github.com/motionbug/setupmanagerhud-starter), not this repo directly.
+
 **Stack:** Cloudflare Workers, Durable Objects, D1 (SQLite), React 19, TypeScript, Vite, Tailwind CSS v4
 
 **Requirements:** Node.js >=20
@@ -92,26 +94,31 @@ Key security measures in this codebase:
 
 ## Testing
 
-Tests are colocated next to source files:
+Two test suites with different Vitest configs:
+
+**Worker tests** (`npm test`) — run in Cloudflare runtime via `@cloudflare/vitest-pool-workers`:
 - `src/index.test.ts` — Worker routes, CORS, health endpoint
 - `src/events.test.ts` — D1 persistence helpers
 - `src/types.test.ts` — Webhook payload validation
 - `src/security-headers.test.ts` — Security header verification
 - `test/webhook-auth.test.ts` — Webhook token authentication flows
 
-Vitest runs through `@cloudflare/vitest-pool-workers`, so Worker behavior is tested in the Cloudflare runtime.
+**Component tests** (`npm run test:components`) — run in jsdom via `vitest.config.components.ts`:
+- `src/components/**/*.test.tsx` — React component tests with Testing Library
 
 ```bash
-npm test                           # Run all tests once
-npm run test:watch                 # Watch mode
+npm test                           # Worker tests (requires build first)
+npm run test:components            # Component tests
+npm run test:all                   # Both suites
+npm run test:watch                 # Worker tests in watch mode
 npm test -- src/events.test.ts    # Run a single test file
 ```
 
-Run `npm run typecheck` and `npm test` before PRs. Cover webhook auth, payload validation, D1 behavior, Durable Object broadcasts, Access/JWT behavior, and security headers when touching those paths.
+Run `npm run typecheck` and `npm test` before PRs.
 
 Send test webhooks with the dummy data script:
 ```bash
-WORKER_URL=https://your-worker.workers.dev node packages/core/scripts/send-dummy-events.js
+WORKER_URL=https://your-worker.workers.dev node scripts/send-dummy-events.js
 ```
 
 Or manually:
@@ -130,21 +137,15 @@ curl -X POST http://localhost:8787/webhook \
 - Rate limiting is handled via Cloudflare WAF rules (configured in dashboard, not code)
 - Customer docs must use placeholders for `CF_ACCESS_AUD`, `CF_ACCESS_TEAM_DOMAIN`, D1 database IDs, and tokens
 
-## Dashboard Components
+## npm Package Build
 
-### EventsChart (`src/components/dashboard/EventsChart.tsx`)
-Displays enrollment success/failure rates over time using a grouped bar chart. Features:
-- Time range toggles: 24h, 7d, 30d, All
-- Only counts finished events (not started)
-- Success = no failed enrollment actions; Failure = at least one failed action
-- Colors match Action Quality chart (chart-2 for success, chart-5 for failure)
+The package exports Worker code, pre-built React dashboard, migrations, and sync scripts:
 
-### KpiCards (`src/components/dashboard/KpiCards.tsx`)
-Four stat cards showing started, finished, avg duration, and failed actions. The Failed Actions card:
-- Becomes clickable when > 0 (triggers "failed" filter)
-- Shows red glow effect when failures exist
+```bash
+npm run build:ui       # Vite → dist/ (React dashboard)
+npm run build:worker   # tsup → dist-worker/ (Worker + Durable Object)
+npm run build:scripts  # Copy sync scripts → dist-scripts/
+npm run build          # All three
+```
 
-### Filters (`src/components/dashboard/Filters.tsx`)
-Filter controls with search, event type, macOS version, and model dropdowns. Features:
-- Red "Clear filters" badge appears above search when any filter is active
-- CSV export sanitizes formula-triggering characters (security hardening)
+Published files: `dist/`, `dist-worker/`, `dist-scripts/`, `migrations/`

@@ -10,7 +10,7 @@ import { ThemeToggle } from "./ThemeToggle";
 import { Skeleton } from "@/components/ui/skeleton";
 import { toast } from "sonner";
 import type { FilterState, StoredEvent } from "@/types";
-import { isFinishedWebhook } from "@/types";
+import { isFinishedWebhook, hasFailedActions, EVENT_STARTED, EVENT_FINISHED, TIME_RANGE_MS } from "@/types";
 
 type AppConfig = {
   version: string;
@@ -154,18 +154,17 @@ export function App() {
     return events.filter((event) => {
       const payload = event.payload;
 
-      if (filters.eventType === "started" && payload.event !== "com.jamf.setupmanager.started") {
+      if (filters.eventType === "started" && payload.event !== EVENT_STARTED) {
         return false;
       }
-      if (filters.eventType === "finished" && payload.event !== "com.jamf.setupmanager.finished") {
+      if (filters.eventType === "finished" && payload.event !== EVENT_FINISHED) {
         return false;
       }
       if (filters.eventType === "failed") {
         if (!isFinishedWebhook(payload)) {
           return false;
         }
-        const actions = payload.enrollmentActions || [];
-        if (!actions.some((a) => a.status === "failed")) {
+        if (!hasFailedActions(payload.enrollmentActions)) {
           return false;
         }
       }
@@ -180,8 +179,7 @@ export function App() {
 
       if (filters.timeRange !== "all") {
         const now = Date.now();
-        const ranges = { hour: 3600000, day: 86400000, week: 604800000 };
-        if (now - event.timestamp > ranges[filters.timeRange]) {
+        if (now - event.timestamp > TIME_RANGE_MS[filters.timeRange]) {
           return false;
         }
       }

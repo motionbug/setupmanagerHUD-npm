@@ -18,8 +18,9 @@ import {
 } from "@hugeicons/core-free-icons";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
+import { formatDuration } from "@/lib/formatters";
 import type { StoredEvent, SetupManagerWebhook } from "@/types";
-import { isFinishedWebhook } from "@/types";
+import { isFinishedWebhook, countFailedActions, EVENT_STARTED } from "@/types";
 
 type ThroughputQuality = "good" | "ok" | "slow";
 
@@ -105,14 +106,6 @@ export function EventsTable({ events, maxVisible = 50, showArchived, archivingId
     });
   };
 
-  const formatDuration = (seconds?: number) => {
-    if (!seconds) return "—";
-    if (seconds < 60) return `${seconds}s`;
-    const mins = Math.floor(seconds / 60);
-    const secs = seconds % 60;
-    return `${mins}m ${secs}s`;
-  };
-
   return (
     <div className="data-table overflow-x-auto rounded-b-xl">
       <Table>
@@ -141,10 +134,10 @@ export function EventsTable({ events, maxVisible = 50, showArchived, archivingId
             visibleEvents.map((event, rowIndex) => {
               const payload = event.payload;
               const isExpanded = expandedRows.has(event.eventId);
-              const isStarted = payload.event === "com.jamf.setupmanager.started";
+              const isStarted = payload.event === EVENT_STARTED;
               const isFinished = isFinishedWebhook(payload);
               const actions = isFinished ? (payload.enrollmentActions || []) : [];
-              const failedCount = actions.filter((a) => a.status === "failed").length;
+              const failedCount = countFailedActions(actions);
               const isArchiving = archivingIds.has(event.eventId);
 
               return (

@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback, useRef, useMemo } from "react";
 import type { StoredEvent, Stats, SetupManagerFinishedWebhook } from "@/types";
-import { isFinishedWebhook } from "@/types";
+import { isFinishedWebhook, getFinishedEvents, countFailedActions, EVENT_STARTED } from "@/types";
 
 interface WebSocketState {
   connected: boolean;
@@ -124,12 +124,9 @@ export function useWebSocket() {
   // Compute stats from events using useMemo (derived data, not separate state)
   const stats = useMemo((): Stats => {
     const started = state.events.filter(
-      (e) => e.payload.event === "com.jamf.setupmanager.started"
+      (e) => e.payload.event === EVENT_STARTED
     );
-    const finished = state.events.filter(
-      (e): e is StoredEvent & { payload: SetupManagerFinishedWebhook } =>
-        isFinishedWebhook(e.payload)
-    );
+    const finished = getFinishedEvents(state.events);
 
     const durations = finished
       .map((e) => e.payload.duration)
@@ -140,10 +137,10 @@ export function useWebSocket() {
         ? Math.round(durations.reduce((a, b) => a + b, 0) / durations.length)
         : 0;
 
-    const failedActions = finished.reduce((count, e) => {
-      const actions = e.payload.enrollmentActions || [];
-      return count + actions.filter((a) => a.status === "failed").length;
-    }, 0);
+    const failedActions = finished.reduce(
+      (count, e) => count + countFailedActions(e.payload.enrollmentActions),
+      0
+    );
 
     const totalActions = finished.reduce((count, e) => {
       return count + (e.payload.enrollmentActions?.length || 0);
