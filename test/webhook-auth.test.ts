@@ -41,12 +41,20 @@ function createDashboardRoomNamespace(): DurableObjectNamespace {
   } as unknown as DurableObjectNamespace;
 }
 
+function createAssetsFetcher(): Fetcher {
+  return {
+    fetch: async () => new Response("Not Found", { status: 404 }),
+  } as unknown as Fetcher;
+}
+
 function createEnv(overrides: Partial<Env> = {}): Env {
   return {
     DB: createD1Database(),
     DASHBOARD_ROOM: createDashboardRoomNamespace(),
+    ASSETS: createAssetsFetcher(),
+    WEBHOOK_TOKEN: "default-token",
     ...overrides,
-  };
+  } as Env;
 }
 
 function createRequest(headers: HeadersInit = {}, body = VALID_PAYLOAD): Request {
@@ -64,7 +72,7 @@ function createRequest(headers: HeadersInit = {}, body = VALID_PAYLOAD): Request
 test("rejects webhook requests when WEBHOOK_TOKEN is not configured", async () => {
   const response = await handleWebhook(
     createRequest(),
-    createEnv({ WEBHOOK_TOKEN: undefined }),
+    createEnv({ WEBHOOK_TOKEN: "" }),
   );
 
   expect(response.status).toBe(503);
@@ -136,10 +144,19 @@ test("accepts Bearer-prefixed Authorization headers", async () => {
   expect(response.status).toBe(200);
 });
 
-test("falls back to WEBHOOK_SECRET during migration", async () => {
+test("uses WEBHOOK_SECRET as fallback when WEBHOOK_TOKEN is undefined", async () => {
+  // This tests the legacy migration path where WEBHOOK_SECRET was the old name
+  // The ?? operator falls back to WEBHOOK_SECRET only when WEBHOOK_TOKEN is nullish
+  const env = {
+    DB: createD1Database(),
+    DASHBOARD_ROOM: createDashboardRoomNamespace(),
+    ASSETS: createAssetsFetcher(),
+    WEBHOOK_SECRET: "legacy-token",
+  } as unknown as Env;
+
   const response = await handleWebhook(
     createRequest({ Authorization: "Bearer legacy-token" }),
-    createEnv({ WEBHOOK_SECRET: "legacy-token" }),
+    env,
   );
 
   expect(response.status).toBe(200);
