@@ -1,6 +1,6 @@
 # @motionbug/setupmanagerhud-core
 
-Real-time webhook dashboard for [Setup Manager](https://github.com/nicknameislink/setupmanager) — monitor macOS device enrollments as they happen.
+Real-time webhook dashboard for [Setup Manager](https://github.com/jamf/setup-manager) — monitor macOS device enrollments as they happen.
 
 Built with React, shadcn/ui, and Cloudflare Workers.
 
