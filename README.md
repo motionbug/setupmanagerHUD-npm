@@ -1,149 +1,60 @@
 # Setup Manager HUD
 
-A real-time webhook dashboard for [Setup Manager](https://github.com/nicknameislink/setupmanager) that helps you monitor macOS device enrollments as they happen.
+A real-time webhook dashboard for [Setup Manager](https://github.com/jamf/setup-manager) that helps you monitor macOS device enrollments as they happen.
 
-Built with React, shadcn/ui, and Cloudflare Workers. Webhooks are protected with a required secret token; the dashboard can optionally be protected with Cloudflare Access.
+Built with React, shadcn/ui, and Cloudflare Workers.
 
 | Dark Mode | Light Mode |
 |-----------|------------|
-| ![Setup Manager HUD - Dark Mode](./docs/setupmanagerhud-dark.png) | ![Setup Manager HUD - Light Mode](./docs/setupmanagerhud-light.png) |
-
-## What It Does
-
-- Shows Setup Manager enrollment events in real time
-- Tracks totals, completion rate, duration, and failed actions
-- Displays device details, macOS versions, actions, and timing
-- Filters and searches stored events
-- Stores event history in Cloudflare D1
-- Supports optional Cloudflare Access protection for the dashboard
+| ![Dark Mode](./docs/setupmanagerhud-dark.png) | ![Light Mode](./docs/setupmanagerhud-light.png) |
 
 ## Quick Start
 
-You do not have to fork this repo manually. The Cloudflare Deploy Button creates a copy in your GitHub account and deploys the Worker to your Cloudflare account.
+**Deploy in one click:**
 
-You need:
+[![Deploy to Cloudflare Workers](https://deploy.workers.cloudflare.com/button)](https://deploy.workers.cloudflare.com/?url=https://github.com/motionbug/setupmanagerhud-starter)
 
-- A GitHub account
-- A Cloudflare account
-- Access to Setup Manager, or you can test with the included dummy event script
-
-### 1. Generate A Webhook Token
-
-Before you click Deploy, generate a token:
+Before deploying, generate a webhook token:
 
 ```bash
 openssl rand -hex 24
 ```
 
-Save this value somewhere secure. You will need the exact same token in two places:
+See the [starter repo](https://github.com/motionbug/setupmanagerhud-starter) for full instructions.
 
-- Cloudflare, as the Worker secret named `WEBHOOK_TOKEN`
-- Setup Manager, as the `token` value in your webhook configuration
+## Upgrading
 
-> [!IMPORTANT]
-> Do not leave `WEBHOOK_TOKEN` blank. Cloudflare hides Worker secrets after they are saved, so keep a copy of the token before continuing.
-
-### 2. Deploy To Cloudflare
-
-[![Deploy to Cloudflare Workers](https://deploy.workers.cloudflare.com/button)](https://deploy.workers.cloudflare.com/?url=https://github.com/motionbug/setupmanagerHUD-npm)
-
-The Deploy Button will:
-
-- Copy this repo to your GitHub account
-- Provision the Worker resources declared in `wrangler.toml`
-- Create the D1 database binding named `DB`
-- Build, apply D1 migrations, and deploy the dashboard
-
-During setup, enter your saved token if Cloudflare asks for `WEBHOOK_TOKEN`.
-
-### 3. Verify The Deployment
-
-After deployment:
-
-- Open your Worker URL, such as `https://setupmanagerhud.<your-subdomain>.workers.dev`
-- Confirm the Worker has a D1 binding named `DB`
-- Confirm `WEBHOOK_TOKEN` is set and non-empty
-- Send a test webhook or dummy events
-- Optionally protect the dashboard with Cloudflare Access
-
-See [Configuration](docs/Configuration.md) for detailed D1, GitHub Actions, manual Wrangler, and health-check steps.
-
-## Connect Setup Manager
-
-Add the webhook URL and token to your Setup Manager configuration:
-
-```xml
-<key>webhooks</key>
-<dict>
-  <key>started</key>
-  <dict>
-    <key>url</key>
-    <string>https://setupmanagerhud.<your-subdomain>.workers.dev/webhook</string>
-    <key>token</key>
-    <string>your-webhook-token-here</string>
-  </dict>
-  <key>finished</key>
-  <dict>
-    <key>url</key>
-    <string>https://setupmanagerhud.<your-subdomain>.workers.dev/webhook</string>
-    <key>token</key>
-    <string>your-webhook-token-here</string>
-  </dict>
-</dict>
-```
-
-Setup Manager sends the token as a raw `Authorization` header. The Worker also accepts `Bearer` tokens for curl and other manual testing.
-
-## Test The Dashboard
-
-From a local clone, you can send dummy events without a real enrollment:
+Updates are delivered via npm. In your deployed project:
 
 ```bash
-WORKER_URL=https://setupmanagerhud.<your-subdomain>.workers.dev \
-  WEBHOOK_TOKEN=your-token-here \
-  node packages/core/scripts/send-dummy-events.js
+npm run upgrade
+npm run deploy
 ```
 
-Open the dashboard after the script finishes. You should see devices, event details, KPIs, and charts populated with test data.
+## npm Package
 
-## Security
+This repo publishes `@motionbug/setupmanagerhud-core` to npm. The package includes:
 
-Setup Manager HUD has two separate security layers:
+- Worker entry point and Durable Object
+- Pre-built React dashboard
+- D1 migrations
+- Sync scripts for assets and migrations
 
-- `WEBHOOK_TOKEN` is required for `POST /webhook`
-- Cloudflare Access is optional and can protect the dashboard, API, and WebSocket routes
+For custom deployments, install the package directly:
 
-The webhook endpoint must stay reachable for devices, but requests are rejected unless the token matches. For full setup instructions, see [Security](docs/Security.md).
+```bash
+npm install @motionbug/setupmanagerhud-core
+```
+
+## Development
+
+See [CLAUDE.md](CLAUDE.md) for development commands and architecture.
 
 ## Documentation
 
-- [Configuration](docs/Configuration.md) - D1, environment variables, health checks, manual deploys, and GitHub Actions
-- [Security](docs/Security.md) - webhook token setup, Cloudflare Access, JWT validation, and rate limiting
-- [Troubleshooting](docs/Troubleshooting.md) - common deploy, webhook, D1, WebSocket, and Access issues
-
-## Local Development
-
-> **Note:** This is a monorepo. Local development commands should be run from `packages/core/`.
-
-```bash
-cd packages/core
-npm install
-npm run dev          # Frontend on :5173
-npm run dev:worker   # Full stack on :8787
-```
-
-For local Worker development, create a `.dev.vars` file from `.dev.vars.example` in the `packages/core` directory.
-
-## Architecture
-
-- Cloudflare Workers handle HTTP, static assets, APIs, and webhook requests
-- Durable Objects coordinate WebSocket clients and live fanout
-- Cloudflare D1 stores webhook history, stats, and filters
-- React and shadcn/ui power the dashboard
-
-## Contributing
-
-Contributions welcome. Please open an issue first to discuss what you would like to change.
+- [Configuration](docs/Configuration.md) - D1, environment variables, Cloudflare Access
+- [Security](docs/Security.md) - Webhook tokens, JWT validation, rate limiting
+- [Troubleshooting](docs/Troubleshooting.md) - Common issues and solutions
 
 ## License
 
