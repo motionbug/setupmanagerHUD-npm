@@ -1,8 +1,17 @@
 {
   "name": "@motionbug/setupmanagerhud-core",
-  "version": "1.1.0",
+  "version": "1.1.1",
   "description": "Real-time webhook dashboard for Setup Manager - deploy to Cloudflare Workers",
   "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/motionbug/setupmanagerhud.git",
+    "directory": "packages/core"
+  },
+  "homepage": "https://github.com/motionbug/setupmanagerhud#readme",
+  "bugs": {
+    "url": "https://github.com/motionbug/setupmanagerhud/issues"
+  },
   "private": false,
   "type": "module",
   "main": "./dist-worker/index.js",
@@ -17,7 +26,8 @@
     "dist",
     "dist-worker",
     "dist-scripts",
-    "migrations"
+    "migrations",
+    "README.md"
   ],
   "publishConfig": {
     "access": "public"
