@@ -99,9 +99,11 @@ describe("App - Optimistic UI and Rollback (UI-04, UI-05)", () => {
     const archiveButton = screen.getByRole("button", { name: /archive/i });
     await user.click(archiveButton);
 
-    // Row should be hidden immediately (before API response)
+    // Row should be visually hidden immediately (opacity-0) before API response
+    // The element stays in DOM but becomes invisible via CSS transition
     await waitFor(() => {
-      expect(screen.queryByText("TEST001")).not.toBeInTheDocument();
+      const row = screen.getByText("TEST001").closest("tr");
+      expect(row).toHaveClass("opacity-0");
     }, { timeout: 100 });
   });
 
