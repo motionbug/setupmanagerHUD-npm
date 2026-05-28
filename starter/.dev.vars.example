@@ -1,8 +1,0 @@
-# Copy this file to .dev.vars for local development
-#
-# REQUIRED: Generate a secure 32-character token
-# Run this in your terminal: openssl rand -hex 32
-WEBHOOK_TOKEN="REPLACE_WITH_GENERATED_TOKEN"
-
-# Cloudflare Access is handled at the network edge in production.
-# Leave CF_ACCESS_AUD and CF_ACCESS_TEAM_DOMAIN unset for local development.
