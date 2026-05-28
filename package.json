@@ -1,6 +1,6 @@
 {
   "name": "@motionbug/setupmanagerhud-core",
-  "version": "1.2.0",
+  "version": "1.2.1",
   "description": "Real-time webhook dashboard for Setup Manager - deploy to Cloudflare Workers",
   "license": "MIT",
   "repository": {
