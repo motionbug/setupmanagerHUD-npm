@@ -19,6 +19,9 @@
     "dist-scripts",
     "migrations"
   ],
+  "publishConfig": {
+    "access": "public"
+  },
   "scripts": {
     "build:ui": "vite build",
     "build:worker": "tsup",
